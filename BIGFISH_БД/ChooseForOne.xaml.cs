@@ -155,7 +155,7 @@ namespace BIGFISH_БД
                     summaryStyle.Fill.BackgroundColor = XLColor.Yellow;
                     summaryStyle.NumberFormat.NumberFormatId = 2;
                     summaryStyle.Border.OutsideBorder = XLBorderStyleValues.Thin;
-
+                    
                     var defaultStyle = workbook.Style;
                     defaultStyle.Border.OutsideBorder = XLBorderStyleValues.Thin;
 
