@@ -16,5 +16,6 @@ namespace BIGFISH_БД
     {
         public string Login { get; set; }
         public string Password { get; set; }
+        public Nullable<int> RoleNumber { get; set; }
     }
 }

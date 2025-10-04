@@ -41,8 +41,18 @@ namespace BIGFISH_БД
 
                     if (user != null)
                     {
-                        new MainWindow().Show();
-                        this.Close();
+                        if (user.RoleNumber == 0) //окно бухгалтера
+                        {
+                            new MainWindow().Show();
+                            this.Close();
+                        }
+
+                        else if (user.RoleNumber == 1) //окно админа
+                        {
+                            new AdminMainWindow().Show();
+                            this.Close();
+                        }
+
                     }
                     else
                     {

@@ -111,6 +111,7 @@
           </Key>
           <Property Name="Login" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Password" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="RoleNumber" Type="int" />
         </EntityType>
         <Association Name="FK__AdvancePa__FIO_F__09746778">
           <End Role="Foundry" Type="Self.Foundry" Multiplicity="0..1" />
@@ -429,6 +430,7 @@
           </Key>
           <Property Name="Login" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Password" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="RoleNumber" Type="Int32" />
         </EntityType>
         <EntityType Name="Articles">
           <Key>
@@ -709,6 +711,7 @@
           <EntitySetMapping Name="User1">
             <EntityTypeMapping TypeName="BigFishBDModel.User1">
               <MappingFragment StoreEntitySet="User1">
+                <ScalarProperty Name="RoleNumber" ColumnName="RoleNumber" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="Login" ColumnName="Login" />
               </MappingFragment>
