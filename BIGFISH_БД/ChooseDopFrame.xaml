@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="BIGFISH_БД.ChooseDopFrame"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BIGFISH_БД"
+             mc:Ignorable="d" 
+             d:DesignHeight="630" d:DesignWidth="1130">
+        <Grid>
+        <TextBlock Text="Выберите таблицу" Height="100" Width="500" FontSize="50" Foreground="SlateBlue" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,50,0,0" TextAlignment="Center"/>
+
+        <TextBlock Text="Доп. услуги" Height="60" Width="400" FontSize="40" Foreground="SlateBlue" HorizontalAlignment="Left"  VerticalAlignment="Center" Margin="50,0,0,250" TextAlignment="Center"/>
+
+        <Button x:Name="DopPackers"  Background="AliceBlue" Height="50" Width="300" Content="Упаковщицы" FontSize="25" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="100,0,0,0" Click="DopPackers_Click"/>
+        <Button x:Name="DopFoundry" Background="AliceBlue" Height="50" Width="300" Content="Литейщики" Click="DopFoundry_Click" FontSize="25" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="100,200,0,0"/>
+
+        <TextBlock Text="Аванс" Height="60" Width="400" FontSize="40" Foreground="SlateBlue" HorizontalAlignment="Left"  VerticalAlignment="Center" Margin="670,0,0,250" TextAlignment="Center"/>
+
+        <Button x:Name="AdvancePackers"  Background="AliceBlue" Height="50" Width="300" Content="Упаковщицы" FontSize="25" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,100,0" Click="AdvancePackers_Click"/>
+        <Button x:Name="AdvanceFoundry" Background="AliceBlue" Height="50" Width="300" Content="Литейщики" Click="AdvanceFoundry_Click"  FontSize="25" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,200,100,0"/>
+
+    </Grid>
+</UserControl>

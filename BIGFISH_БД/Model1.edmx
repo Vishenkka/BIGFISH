@@ -1,0 +1,822 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Хранилище BigFishBDModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AdvancePayFoundry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DateAdv" Type="date" />
+          <Property Name="FIO_Foundry" Type="nvarchar" MaxLength="255" />
+          <Property Name="AdvancePay" Type="float" />
+        </EntityType>
+        <EntityType Name="AdvancePayPackers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DateAdv" Type="date" />
+          <Property Name="FIO" Type="nvarchar" MaxLength="255" />
+          <Property Name="AdvancePay" Type="float" />
+        </EntityType>
+        <EntityType Name="Articles">
+          <Key>
+            <PropertyRef Name="Article" />
+          </Key>
+          <Property Name="Article" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="PriceFoundry" Type="int" Nullable="false" />
+          <Property Name="PricePackers" Type="int" Nullable="false" />
+          <Property Name="Type" Type="int" />
+        </EntityType>
+        <EntityType Name="ColorArticles">
+          <Key>
+            <PropertyRef Name="ColorArticle" />
+          </Key>
+          <Property Name="ColorArticle" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Article" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="DailyReport">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DatePack" Type="date" />
+          <Property Name="FIO" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="StorageName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="FinePacks" Type="float" />
+          <Property Name="Packs" Type="float" />
+          <Property Name="DateFoundry" Type="date" Nullable="false" />
+          <Property Name="Packs2" Type="float" />
+          <Property Name="FinePacksFoundry" Type="float" />
+          <Property Name="FIO_Foundry" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Number_Ved" Type="nvarchar" MaxLength="255" />
+          <Property Name="ArticlePack" Type="nvarchar" MaxLength="255" />
+          <Property Name="ArticleFoundry" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="DopFoundry">
+          <Key>
+            <PropertyRef Name="IdDop" />
+          </Key>
+          <Property Name="DateDop" Type="date" Nullable="false" />
+          <Property Name="IdDop" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FIO_Foundry" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Name_Dop" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="PriceForOne" Type="int" Nullable="false" />
+          <Property Name="Colvo" Type="int" Nullable="false" />
+          <Property Name="IdVed" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="DopPackers">
+          <Key>
+            <PropertyRef Name="IdDop" />
+          </Key>
+          <Property Name="DateDopPackers" Type="date" Nullable="false" />
+          <Property Name="IdDop" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FIO" Type="nvarchar" MaxLength="255" />
+          <Property Name="Name_Dop" Type="nvarchar" MaxLength="255" />
+          <Property Name="PriceForOne" Type="int" />
+          <Property Name="Colvo" Type="int" />
+          <Property Name="IdVed" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="Foundry">
+          <Key>
+            <PropertyRef Name="FIO_Foundry" />
+          </Key>
+          <Property Name="FIO_Foundry" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Naim_Dop">
+          <Key>
+            <PropertyRef Name="Name_Dop" />
+          </Key>
+          <Property Name="Name_Dop" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Packers">
+          <Key>
+            <PropertyRef Name="FIO" />
+          </Key>
+          <Property Name="FIO" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Storage">
+          <Key>
+            <PropertyRef Name="StorageName" />
+          </Key>
+          <Property Name="StorageName" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User1">
+          <Key>
+            <PropertyRef Name="Login" />
+          </Key>
+          <Property Name="Login" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__AdvancePa__FIO_F__09746778">
+          <End Role="Foundry" Type="Self.Foundry" Multiplicity="0..1" />
+          <End Role="AdvancePayFoundry" Type="Self.AdvancePayFoundry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Foundry">
+              <PropertyRef Name="FIO_Foundry" />
+            </Principal>
+            <Dependent Role="AdvancePayFoundry">
+              <PropertyRef Name="FIO_Foundry" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AdvancePayP__FIO__0697FACD">
+          <End Role="Packers" Type="Self.Packers" Multiplicity="0..1" />
+          <End Role="AdvancePayPackers" Type="Self.AdvancePayPackers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Packers">
+              <PropertyRef Name="FIO" />
+            </Principal>
+            <Dependent Role="AdvancePayPackers">
+              <PropertyRef Name="FIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DailyRepo__FIO_F__4D94879B">
+          <End Role="Foundry" Type="Self.Foundry" Multiplicity="1" />
+          <End Role="DailyReport" Type="Self.DailyReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Foundry">
+              <PropertyRef Name="FIO_Foundry" />
+            </Principal>
+            <Dependent Role="DailyReport">
+              <PropertyRef Name="FIO_Foundry" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DopPacker__Name___3D2915A8">
+          <End Role="Naim_Dop" Type="Self.Naim_Dop" Multiplicity="0..1" />
+          <End Role="DopPackers" Type="Self.DopPackers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Naim_Dop">
+              <PropertyRef Name="Name_Dop" />
+            </Principal>
+            <Dependent Role="DopPackers">
+              <PropertyRef Name="Name_Dop" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DopPackers__FIO__3C34F16F">
+          <End Role="Packers" Type="Self.Packers" Multiplicity="0..1" />
+          <End Role="DopPackers" Type="Self.DopPackers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Packers">
+              <PropertyRef Name="FIO" />
+            </Principal>
+            <Dependent Role="DopPackers">
+              <PropertyRef Name="FIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ArticleFoundry">
+          <End Role="Articles" Type="Self.Articles" Multiplicity="0..1" />
+          <End Role="DailyReport" Type="Self.DailyReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Articles">
+              <PropertyRef Name="Article" />
+            </Principal>
+            <Dependent Role="DailyReport">
+              <PropertyRef Name="ArticleFoundry" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ArticlePack">
+          <End Role="Articles" Type="Self.Articles" Multiplicity="0..1" />
+          <End Role="DailyReport" Type="Self.DailyReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Articles">
+              <PropertyRef Name="Article" />
+            </Principal>
+            <Dependent Role="DailyReport">
+              <PropertyRef Name="ArticlePack" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ColorArticles_Articles">
+          <End Role="Articles" Type="Self.Articles" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ColorArticles" Type="Self.ColorArticles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Articles">
+              <PropertyRef Name="Article" />
+            </Principal>
+            <Dependent Role="ColorArticles">
+              <PropertyRef Name="Article" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DailyReport_Packers">
+          <End Role="Packers" Type="Self.Packers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="DailyReport" Type="Self.DailyReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Packers">
+              <PropertyRef Name="FIO" />
+            </Principal>
+            <Dependent Role="DailyReport">
+              <PropertyRef Name="FIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DailyReport_Storage">
+          <End Role="Storage" Type="Self.Storage" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="DailyReport" Type="Self.DailyReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Storage">
+              <PropertyRef Name="StorageName" />
+            </Principal>
+            <Dependent Role="DailyReport">
+              <PropertyRef Name="StorageName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FIO_Foundry">
+          <End Role="Foundry" Type="Self.Foundry" Multiplicity="1" />
+          <End Role="DopFoundry" Type="Self.DopFoundry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Foundry">
+              <PropertyRef Name="FIO_Foundry" />
+            </Principal>
+            <Dependent Role="DopFoundry">
+              <PropertyRef Name="FIO_Foundry" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Name_Dop">
+          <End Role="Naim_Dop" Type="Self.Naim_Dop" Multiplicity="1" />
+          <End Role="DopFoundry" Type="Self.DopFoundry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Naim_Dop">
+              <PropertyRef Name="Name_Dop" />
+            </Principal>
+            <Dependent Role="DopFoundry">
+              <PropertyRef Name="Name_Dop" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Хранилище BigFishBDModelContainer">
+          <EntitySet Name="AdvancePayFoundry" EntityType="Self.AdvancePayFoundry" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AdvancePayPackers" EntityType="Self.AdvancePayPackers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Articles" EntityType="Self.Articles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ColorArticles" EntityType="Self.ColorArticles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DailyReport" EntityType="Self.DailyReport" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DopFoundry" EntityType="Self.DopFoundry" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DopPackers" EntityType="Self.DopPackers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Foundry" EntityType="Self.Foundry" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Naim_Dop" EntityType="Self.Naim_Dop" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Packers" EntityType="Self.Packers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Storage" EntityType="Self.Storage" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User1" EntityType="Self.User1" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__AdvancePa__FIO_F__09746778" Association="Self.FK__AdvancePa__FIO_F__09746778">
+            <End Role="Foundry" EntitySet="Foundry" />
+            <End Role="AdvancePayFoundry" EntitySet="AdvancePayFoundry" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AdvancePayP__FIO__0697FACD" Association="Self.FK__AdvancePayP__FIO__0697FACD">
+            <End Role="Packers" EntitySet="Packers" />
+            <End Role="AdvancePayPackers" EntitySet="AdvancePayPackers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DailyRepo__FIO_F__4D94879B" Association="Self.FK__DailyRepo__FIO_F__4D94879B">
+            <End Role="Foundry" EntitySet="Foundry" />
+            <End Role="DailyReport" EntitySet="DailyReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DopPacker__Name___3D2915A8" Association="Self.FK__DopPacker__Name___3D2915A8">
+            <End Role="Naim_Dop" EntitySet="Naim_Dop" />
+            <End Role="DopPackers" EntitySet="DopPackers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DopPackers__FIO__3C34F16F" Association="Self.FK__DopPackers__FIO__3C34F16F">
+            <End Role="Packers" EntitySet="Packers" />
+            <End Role="DopPackers" EntitySet="DopPackers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ArticleFoundry" Association="Self.FK_ArticleFoundry">
+            <End Role="Articles" EntitySet="Articles" />
+            <End Role="DailyReport" EntitySet="DailyReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ArticlePack" Association="Self.FK_ArticlePack">
+            <End Role="Articles" EntitySet="Articles" />
+            <End Role="DailyReport" EntitySet="DailyReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ColorArticles_Articles" Association="Self.FK_ColorArticles_Articles">
+            <End Role="Articles" EntitySet="Articles" />
+            <End Role="ColorArticles" EntitySet="ColorArticles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DailyReport_Packers" Association="Self.FK_DailyReport_Packers">
+            <End Role="Packers" EntitySet="Packers" />
+            <End Role="DailyReport" EntitySet="DailyReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DailyReport_Storage" Association="Self.FK_DailyReport_Storage">
+            <End Role="Storage" EntitySet="Storage" />
+            <End Role="DailyReport" EntitySet="DailyReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FIO_Foundry" Association="Self.FK_FIO_Foundry">
+            <End Role="Foundry" EntitySet="Foundry" />
+            <End Role="DopFoundry" EntitySet="DopFoundry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Name_Dop" Association="Self.FK_Name_Dop">
+            <End Role="Naim_Dop" EntitySet="Naim_Dop" />
+            <End Role="DopFoundry" EntitySet="DopFoundry" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="BigFishBDModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ColorArticles">
+          <Key>
+            <PropertyRef Name="ColorArticle" />
+          </Key>
+          <Property Name="ColorArticle" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Article" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Articles" Relationship="BigFishBDModel.FK_ColorArticles_Articles" FromRole="ColorArticles" ToRole="Articles" />
+          </EntityType>
+        <EntityType Name="Foundry">
+          <Key>
+            <PropertyRef Name="FIO_Foundry" />
+          </Key>
+          <Property Name="FIO_Foundry" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="DailyReport" Relationship="BigFishBDModel.FK__DailyRepo__FIO_F__4D94879B" FromRole="Foundry" ToRole="DailyReport" />
+          <NavigationProperty Name="DopFoundry" Relationship="BigFishBDModel.FK_FIO_Foundry" FromRole="Foundry" ToRole="DopFoundry" />
+          <NavigationProperty Name="AdvancePayFoundry" Relationship="BigFishBDModel.FK__AdvancePa__FIO_F__09746778" FromRole="Foundry" ToRole="AdvancePayFoundry" />
+        </EntityType>
+        <EntityType Name="Packers">
+          <Key>
+            <PropertyRef Name="FIO" />
+          </Key>
+          <Property Name="FIO" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="DailyReport" Relationship="BigFishBDModel.FK_DailyReport_Packers" FromRole="Packers" ToRole="DailyReport" />
+          <NavigationProperty Name="DopPackers" Relationship="BigFishBDModel.FK__DopPackers__FIO__3C34F16F" FromRole="Packers" ToRole="DopPackers" />
+          <NavigationProperty Name="AdvancePayPackers" Relationship="BigFishBDModel.FK__AdvancePayP__FIO__0697FACD" FromRole="Packers" ToRole="AdvancePayPackers" />
+        </EntityType>
+        <EntityType Name="Storage">
+          <Key>
+            <PropertyRef Name="StorageName" />
+          </Key>
+          <Property Name="StorageName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="DailyReport" Relationship="BigFishBDModel.FK_DailyReport_Storage" FromRole="Storage" ToRole="DailyReport" />
+        </EntityType>
+        <EntityContainer Name="BigFishBDEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ColorArticles" EntityType="Self.ColorArticles" />
+          <EntitySet Name="Foundry" EntityType="Self.Foundry" />
+          <EntitySet Name="Packers" EntityType="Self.Packers" />
+          <EntitySet Name="Storage" EntityType="Self.Storage" />
+          <EntitySet Name="User1" EntityType="BigFishBDModel.User1" />
+          <EntitySet Name="Articles" EntityType="BigFishBDModel.Articles" />
+          <AssociationSet Name="FK_ColorArticles_Articles" Association="BigFishBDModel.FK_ColorArticles_Articles">
+            <End Role="Articles" EntitySet="Articles" />
+            <End Role="ColorArticles" EntitySet="ColorArticles" />
+          </AssociationSet>
+          <EntitySet Name="DailyReport" EntityType="BigFishBDModel.DailyReport" />
+          <AssociationSet Name="FK_ArticleFoundry" Association="BigFishBDModel.FK_ArticleFoundry">
+            <End Role="Articles" EntitySet="Articles" />
+            <End Role="DailyReport" EntitySet="DailyReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ArticlePack" Association="BigFishBDModel.FK_ArticlePack">
+            <End Role="Articles" EntitySet="Articles" />
+            <End Role="DailyReport" EntitySet="DailyReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DailyRepo__FIO_F__4D94879B" Association="BigFishBDModel.FK__DailyRepo__FIO_F__4D94879B">
+            <End Role="Foundry" EntitySet="Foundry" />
+            <End Role="DailyReport" EntitySet="DailyReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DailyReport_Packers" Association="BigFishBDModel.FK_DailyReport_Packers">
+            <End Role="Packers" EntitySet="Packers" />
+            <End Role="DailyReport" EntitySet="DailyReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DailyReport_Storage" Association="BigFishBDModel.FK_DailyReport_Storage">
+            <End Role="Storage" EntitySet="Storage" />
+            <End Role="DailyReport" EntitySet="DailyReport" />
+          </AssociationSet>
+          <EntitySet Name="Naim_Dop" EntityType="BigFishBDModel.Naim_Dop" />
+          <EntitySet Name="DopFoundry" EntityType="BigFishBDModel.DopFoundry" />
+          <AssociationSet Name="FK_FIO_Foundry" Association="BigFishBDModel.FK_FIO_Foundry">
+            <End Role="Foundry" EntitySet="Foundry" />
+            <End Role="DopFoundry" EntitySet="DopFoundry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Name_Dop" Association="BigFishBDModel.FK_Name_Dop">
+            <End Role="Naim_Dop" EntitySet="Naim_Dop" />
+            <End Role="DopFoundry" EntitySet="DopFoundry" />
+          </AssociationSet>
+          <EntitySet Name="DopPackers" EntityType="BigFishBDModel.DopPackers" />
+          <AssociationSet Name="FK__DopPacker__Name___3D2915A8" Association="BigFishBDModel.FK__DopPacker__Name___3D2915A8">
+            <End Role="Naim_Dop" EntitySet="Naim_Dop" />
+            <End Role="DopPackers" EntitySet="DopPackers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DopPackers__FIO__3C34F16F" Association="BigFishBDModel.FK__DopPackers__FIO__3C34F16F">
+            <End Role="Packers" EntitySet="Packers" />
+            <End Role="DopPackers" EntitySet="DopPackers" />
+          </AssociationSet>
+          <EntitySet Name="AdvancePayFoundry" EntityType="BigFishBDModel.AdvancePayFoundry" />
+          <EntitySet Name="AdvancePayPackers" EntityType="BigFishBDModel.AdvancePayPackers" />
+          <AssociationSet Name="FK__AdvancePa__FIO_F__09746778" Association="BigFishBDModel.FK__AdvancePa__FIO_F__09746778">
+            <End Role="Foundry" EntitySet="Foundry" />
+            <End Role="AdvancePayFoundry" EntitySet="AdvancePayFoundry" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AdvancePayP__FIO__0697FACD" Association="BigFishBDModel.FK__AdvancePayP__FIO__0697FACD">
+            <End Role="Packers" EntitySet="Packers" />
+            <End Role="AdvancePayPackers" EntitySet="AdvancePayPackers" />
+          </AssociationSet>
+          </EntityContainer>
+        <EntityType Name="User1">
+          <Key>
+            <PropertyRef Name="Login" />
+          </Key>
+          <Property Name="Login" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Articles">
+          <Key>
+            <PropertyRef Name="Article" />
+          </Key>
+          <Property Name="Article" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PriceFoundry" Type="Int32" Nullable="false" />
+          <Property Name="PricePackers" Type="Int32" Nullable="false" />
+          <Property Name="Type" Type="Int32" />
+          <NavigationProperty Name="ColorArticles" Relationship="BigFishBDModel.FK_ColorArticles_Articles" FromRole="Articles" ToRole="ColorArticles" />
+          <NavigationProperty Name="DailyReport" Relationship="BigFishBDModel.FK_ArticleFoundry" FromRole="Articles" ToRole="DailyReport" />
+          <NavigationProperty Name="DailyReport1" Relationship="BigFishBDModel.FK_ArticlePack" FromRole="Articles" ToRole="DailyReport" />
+        </EntityType>
+        <Association Name="FK_ColorArticles_Articles">
+          <End Type="BigFishBDModel.Articles" Role="Articles" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="BigFishBDModel.ColorArticles" Role="ColorArticles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Articles">
+              <PropertyRef Name="Article" />
+            </Principal>
+            <Dependent Role="ColorArticles">
+              <PropertyRef Name="Article" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="DailyReport">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DatePack" Type="DateTime" Precision="0" />
+          <Property Name="FIO" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="StorageName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="FinePacks" Type="Double" />
+          <Property Name="Packs" Type="Double" />
+          <Property Name="DateFoundry" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Packs2" Type="Double" />
+          <Property Name="FinePacksFoundry" Type="Double" />
+          <Property Name="FIO_Foundry" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Number_Ved" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ArticlePack" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ArticleFoundry" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Articles" Relationship="BigFishBDModel.FK_ArticleFoundry" FromRole="DailyReport" ToRole="Articles" />
+          <NavigationProperty Name="Articles1" Relationship="BigFishBDModel.FK_ArticlePack" FromRole="DailyReport" ToRole="Articles" />
+          <NavigationProperty Name="Foundry" Relationship="BigFishBDModel.FK__DailyRepo__FIO_F__4D94879B" FromRole="DailyReport" ToRole="Foundry" />
+          <NavigationProperty Name="Packers" Relationship="BigFishBDModel.FK_DailyReport_Packers" FromRole="DailyReport" ToRole="Packers" />
+          <NavigationProperty Name="Storage" Relationship="BigFishBDModel.FK_DailyReport_Storage" FromRole="DailyReport" ToRole="Storage" />
+        </EntityType>
+        <Association Name="FK_ArticleFoundry">
+          <End Type="BigFishBDModel.Articles" Role="Articles" Multiplicity="0..1" />
+          <End Type="BigFishBDModel.DailyReport" Role="DailyReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Articles">
+              <PropertyRef Name="Article" />
+            </Principal>
+            <Dependent Role="DailyReport">
+              <PropertyRef Name="ArticleFoundry" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ArticlePack">
+          <End Type="BigFishBDModel.Articles" Role="Articles" Multiplicity="0..1" />
+          <End Type="BigFishBDModel.DailyReport" Role="DailyReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Articles">
+              <PropertyRef Name="Article" />
+            </Principal>
+            <Dependent Role="DailyReport">
+              <PropertyRef Name="ArticlePack" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DailyRepo__FIO_F__4D94879B">
+          <End Type="BigFishBDModel.Foundry" Role="Foundry" Multiplicity="1" />
+          <End Type="BigFishBDModel.DailyReport" Role="DailyReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Foundry">
+              <PropertyRef Name="FIO_Foundry" />
+            </Principal>
+            <Dependent Role="DailyReport">
+              <PropertyRef Name="FIO_Foundry" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DailyReport_Packers">
+          <End Type="BigFishBDModel.Packers" Role="Packers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="BigFishBDModel.DailyReport" Role="DailyReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Packers">
+              <PropertyRef Name="FIO" />
+            </Principal>
+            <Dependent Role="DailyReport">
+              <PropertyRef Name="FIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DailyReport_Storage">
+          <End Type="BigFishBDModel.Storage" Role="Storage" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="BigFishBDModel.DailyReport" Role="DailyReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Storage">
+              <PropertyRef Name="StorageName" />
+            </Principal>
+            <Dependent Role="DailyReport">
+              <PropertyRef Name="StorageName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Naim_Dop">
+          <Key>
+            <PropertyRef Name="Name_Dop" />
+          </Key>
+          <Property Name="Name_Dop" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="DopFoundry" Relationship="BigFishBDModel.FK_Name_Dop" FromRole="Naim_Dop" ToRole="DopFoundry" />
+          <NavigationProperty Name="DopPackers" Relationship="BigFishBDModel.FK__DopPacker__Name___3D2915A8" FromRole="Naim_Dop" ToRole="DopPackers" />
+        </EntityType>
+        <EntityType Name="DopFoundry">
+          <Key>
+            <PropertyRef Name="IdDop" />
+          </Key>
+          <Property Name="DateDop" Type="DateTime" Precision="0" Nullable="false" />
+          <Property Name="IdDop" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FIO_Foundry" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Name_Dop" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PriceForOne" Type="Int32" Nullable="false" />
+          <Property Name="Colvo" Type="Int32" Nullable="false" />
+          <Property Name="IdVed" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Foundry" Relationship="BigFishBDModel.FK_FIO_Foundry" FromRole="DopFoundry" ToRole="Foundry" />
+          <NavigationProperty Name="Naim_Dop" Relationship="BigFishBDModel.FK_Name_Dop" FromRole="DopFoundry" ToRole="Naim_Dop" />
+        </EntityType>
+        <Association Name="FK_FIO_Foundry">
+          <End Type="BigFishBDModel.Foundry" Role="Foundry" Multiplicity="1" />
+          <End Type="BigFishBDModel.DopFoundry" Role="DopFoundry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Foundry">
+              <PropertyRef Name="FIO_Foundry" />
+            </Principal>
+            <Dependent Role="DopFoundry">
+              <PropertyRef Name="FIO_Foundry" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Name_Dop">
+          <End Type="BigFishBDModel.Naim_Dop" Role="Naim_Dop" Multiplicity="1" />
+          <End Type="BigFishBDModel.DopFoundry" Role="DopFoundry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Naim_Dop">
+              <PropertyRef Name="Name_Dop" />
+            </Principal>
+            <Dependent Role="DopFoundry">
+              <PropertyRef Name="Name_Dop" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="DopPackers">
+          <Key>
+            <PropertyRef Name="IdDop" />
+          </Key>
+          <Property Name="DateDopPackers" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="IdDop" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FIO" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Name_Dop" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PriceForOne" Type="Int32" />
+          <Property Name="Colvo" Type="Int32" />
+          <Property Name="IdVed" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Naim_Dop" Relationship="BigFishBDModel.FK__DopPacker__Name___3D2915A8" FromRole="DopPackers" ToRole="Naim_Dop" />
+          <NavigationProperty Name="Packers" Relationship="BigFishBDModel.FK__DopPackers__FIO__3C34F16F" FromRole="DopPackers" ToRole="Packers" />
+        </EntityType>
+        <Association Name="FK__DopPacker__Name___3D2915A8">
+          <End Type="BigFishBDModel.Naim_Dop" Role="Naim_Dop" Multiplicity="0..1" />
+          <End Type="BigFishBDModel.DopPackers" Role="DopPackers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Naim_Dop">
+              <PropertyRef Name="Name_Dop" />
+            </Principal>
+            <Dependent Role="DopPackers">
+              <PropertyRef Name="Name_Dop" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DopPackers__FIO__3C34F16F">
+          <End Type="BigFishBDModel.Packers" Role="Packers" Multiplicity="0..1" />
+          <End Type="BigFishBDModel.DopPackers" Role="DopPackers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Packers">
+              <PropertyRef Name="FIO" />
+            </Principal>
+            <Dependent Role="DopPackers">
+              <PropertyRef Name="FIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AdvancePayFoundry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DateAdv" Type="DateTime" Precision="0" />
+          <Property Name="FIO_Foundry" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AdvancePay" Type="Double" />
+          <NavigationProperty Name="Foundry" Relationship="BigFishBDModel.FK__AdvancePa__FIO_F__09746778" FromRole="AdvancePayFoundry" ToRole="Foundry" />
+        </EntityType>
+        <EntityType Name="AdvancePayPackers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DateAdv" Type="DateTime" Precision="0" />
+          <Property Name="FIO" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AdvancePay" Type="Double" />
+          <NavigationProperty Name="Packers" Relationship="BigFishBDModel.FK__AdvancePayP__FIO__0697FACD" FromRole="AdvancePayPackers" ToRole="Packers" />
+        </EntityType>
+        <Association Name="FK__AdvancePa__FIO_F__09746778">
+          <End Type="BigFishBDModel.Foundry" Role="Foundry" Multiplicity="0..1" />
+          <End Type="BigFishBDModel.AdvancePayFoundry" Role="AdvancePayFoundry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Foundry">
+              <PropertyRef Name="FIO_Foundry" />
+            </Principal>
+            <Dependent Role="AdvancePayFoundry">
+              <PropertyRef Name="FIO_Foundry" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AdvancePayP__FIO__0697FACD">
+          <End Type="BigFishBDModel.Packers" Role="Packers" Multiplicity="0..1" />
+          <End Type="BigFishBDModel.AdvancePayPackers" Role="AdvancePayPackers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Packers">
+              <PropertyRef Name="FIO" />
+            </Principal>
+            <Dependent Role="AdvancePayPackers">
+              <PropertyRef Name="FIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Хранилище BigFishBDModelContainer" CdmEntityContainer="BigFishBDEntities">
+          <EntitySetMapping Name="ColorArticles">
+            <EntityTypeMapping TypeName="BigFishBDModel.ColorArticles">
+              <MappingFragment StoreEntitySet="ColorArticles">
+                <ScalarProperty Name="ColorArticle" ColumnName="ColorArticle" />
+                <ScalarProperty Name="Article" ColumnName="Article" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Foundry">
+            <EntityTypeMapping TypeName="BigFishBDModel.Foundry">
+              <MappingFragment StoreEntitySet="Foundry">
+              <ScalarProperty Name="FIO_Foundry" ColumnName="FIO_Foundry" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Packers">
+            <EntityTypeMapping TypeName="BigFishBDModel.Packers">
+              <MappingFragment StoreEntitySet="Packers">
+                <ScalarProperty Name="FIO" ColumnName="FIO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Storage">
+            <EntityTypeMapping TypeName="BigFishBDModel.Storage">
+              <MappingFragment StoreEntitySet="Storage">
+                <ScalarProperty Name="StorageName" ColumnName="StorageName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User1">
+            <EntityTypeMapping TypeName="BigFishBDModel.User1">
+              <MappingFragment StoreEntitySet="User1">
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Login" ColumnName="Login" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Articles">
+            <EntityTypeMapping TypeName="BigFishBDModel.Articles">
+              <MappingFragment StoreEntitySet="Articles">
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="PricePackers" ColumnName="PricePackers" />
+                <ScalarProperty Name="PriceFoundry" ColumnName="PriceFoundry" />
+                <ScalarProperty Name="Article" ColumnName="Article" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DailyReport">
+            <EntityTypeMapping TypeName="BigFishBDModel.DailyReport">
+              <MappingFragment StoreEntitySet="DailyReport">
+                <ScalarProperty Name="ArticleFoundry" ColumnName="ArticleFoundry" />
+                <ScalarProperty Name="ArticlePack" ColumnName="ArticlePack" />
+                <ScalarProperty Name="Number_Ved" ColumnName="Number_Ved" />
+                <ScalarProperty Name="FIO_Foundry" ColumnName="FIO_Foundry" />
+                <ScalarProperty Name="FinePacksFoundry" ColumnName="FinePacksFoundry" />
+                <ScalarProperty Name="Packs2" ColumnName="Packs2" />
+                <ScalarProperty Name="DateFoundry" ColumnName="DateFoundry" />
+                <ScalarProperty Name="Packs" ColumnName="Packs" />
+                <ScalarProperty Name="FinePacks" ColumnName="FinePacks" />
+                <ScalarProperty Name="StorageName" ColumnName="StorageName" />
+                <ScalarProperty Name="FIO" ColumnName="FIO" />
+                <ScalarProperty Name="DatePack" ColumnName="DatePack" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Naim_Dop">
+            <EntityTypeMapping TypeName="BigFishBDModel.Naim_Dop">
+              <MappingFragment StoreEntitySet="Naim_Dop">
+                <ScalarProperty Name="Name_Dop" ColumnName="Name_Dop" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DopFoundry">
+            <EntityTypeMapping TypeName="BigFishBDModel.DopFoundry">
+              <MappingFragment StoreEntitySet="DopFoundry">
+                <ScalarProperty Name="IdVed" ColumnName="IdVed" />
+                <ScalarProperty Name="Colvo" ColumnName="Colvo" />
+                <ScalarProperty Name="PriceForOne" ColumnName="PriceForOne" />
+                <ScalarProperty Name="Name_Dop" ColumnName="Name_Dop" />
+                <ScalarProperty Name="FIO_Foundry" ColumnName="FIO_Foundry" />
+                <ScalarProperty Name="IdDop" ColumnName="IdDop" />
+                <ScalarProperty Name="DateDop" ColumnName="DateDop" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DopPackers">
+            <EntityTypeMapping TypeName="BigFishBDModel.DopPackers">
+              <MappingFragment StoreEntitySet="DopPackers">
+                <ScalarProperty Name="IdVed" ColumnName="IdVed" />
+                <ScalarProperty Name="Colvo" ColumnName="Colvo" />
+                <ScalarProperty Name="PriceForOne" ColumnName="PriceForOne" />
+                <ScalarProperty Name="Name_Dop" ColumnName="Name_Dop" />
+                <ScalarProperty Name="FIO" ColumnName="FIO" />
+                <ScalarProperty Name="IdDop" ColumnName="IdDop" />
+                <ScalarProperty Name="DateDopPackers" ColumnName="DateDopPackers" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AdvancePayFoundry">
+            <EntityTypeMapping TypeName="BigFishBDModel.AdvancePayFoundry">
+              <MappingFragment StoreEntitySet="AdvancePayFoundry">
+                <ScalarProperty Name="AdvancePay" ColumnName="AdvancePay" />
+                <ScalarProperty Name="FIO_Foundry" ColumnName="FIO_Foundry" />
+                <ScalarProperty Name="DateAdv" ColumnName="DateAdv" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AdvancePayPackers">
+            <EntityTypeMapping TypeName="BigFishBDModel.AdvancePayPackers">
+              <MappingFragment StoreEntitySet="AdvancePayPackers">
+                <ScalarProperty Name="AdvancePay" ColumnName="AdvancePay" />
+                <ScalarProperty Name="FIO" ColumnName="FIO" />
+                <ScalarProperty Name="DateAdv" ColumnName="DateAdv" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Нет" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

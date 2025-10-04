@@ -1,0 +1,15 @@
+﻿<Window x:Class="BIGFISH_БД.Authorization"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BIGFISH_БД"
+        mc:Ignorable="d"
+        Title="Authorization" Height="321" Width="294.672" WindowStartupLocation="CenterScreen">
+    <Grid >
+        <TextBox Name="tbL" HorizontalAlignment="Center" Height="45" Margin="0,66,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <TextBox Name="tbP" HorizontalAlignment="Center" Height="41" Text=""  VerticalAlignment="Center" Width="120"/>
+        <Button Content="OK" IsDefault="True" HorizontalAlignment="Center" Background="SlateBlue" Margin="0,219,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <TextBlock Text="Введите логин и пароль:" Height="50" FontSize="20" HorizontalAlignment="Center" Margin="0,16,0,239"/>
+    </Grid>
+</Window>

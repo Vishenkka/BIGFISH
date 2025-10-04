@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="BIGFISH_БД.DopPackers1"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BIGFISH_БД" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+                     d:DesignHeight="630" d:DesignWidth="1130" Loaded="UserControl_Loaded" >
+    <Grid>
+
+        <DataGrid Background="AliceBlue" Name="TablDopRep" Margin="0,104,0,0" HorizontalAlignment="Center" Height="350"  AutoGenerateColumns="False" VerticalAlignment="Top" Width="800">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding IdDop}" Width="75" Header="Id"/>
+                <DataGridTextColumn Binding="{Binding IdVed}" Width="75" Header="№ ведомости"/>
+                <DataGridTextColumn Binding="{Binding DateDopPackers,StringFormat='dd/MM/yyyy'}" Width="100"  Header="Дата" />
+                <DataGridTextColumn Binding="{Binding FIO}" Header="Упаковщица" Width="150"/>
+                <DataGridTextColumn Binding="{Binding Name_Dop}"  Header="Наименование" Width="150"/>
+                <DataGridTextColumn Binding="{Binding Colvo}" Header="Кол-во" Width="100"/>
+                <DataGridTextColumn Binding="{Binding PriceForOne}"  Header="Стоимость за штуку" Width="150"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock Text="Дата" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,957,59" Width="53" RenderTransformOrigin="0.513,0.482"/>
+        <DatePicker Name="dpDateDop" DisplayDateStart="2020-01-01" DisplayDateEnd="2099-01-01"  Margin="69,484,926,121"/>
+
+        <TextBlock Text="№ ведомости" TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,795,76" Width="127"/>
+        <TextBox Text="" Name="tbIdVed" Margin="210,454,795,122" FontSize="18"/>
+
+        <TextBlock Text="Упаковщица" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,652,44" Width="97"/>
+        <ComboBox Name="tbPackers" TextBoxBase.TextChanged="tbPackers_TextChanged"  IsEditable="True" FontSize="18" HorizontalAlignment="Right"  Height="55" Margin="0,454,606,0"  Text="" VerticalAlignment="Top" Width="178" TextSearch.TextPath="FIO" ItemsSource="{Binding Packers}" DisplayMemberPath="FIO" SelectedValuePath="FIO"/>
+
+        <TextBlock Text="Наименование" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,438,44" Width="117"/>
+        <ComboBox Name="tbNameDop" TextBoxBase.TextChanged="tbNameDop_TextChanged"  IsEditable="True" FontSize="18" HorizontalAlignment="Right"  Height="55" Margin="0,454,410,0"  Text="" VerticalAlignment="Top" Width="173" TextSearch.TextPath="Name_Dop" ItemsSource="{Binding Name_Dop}" DisplayMemberPath="Name_Dop" SelectedValuePath="Name_Dop"/>
+
+        <TextBlock Text="Количество" TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,254,44" Width="111"/>
+        <TextBox Text="" Name="tbColvo" Margin="747,454,238,121" FontSize="18"/>
+
+        <TextBlock Text="Цена за штуку" TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,84,43" Width="120"/>
+        <TextBox Text="" Name="tbPriceForOne" Margin="921,455,84,121" FontSize="18"/>
+
+        <Button Content="Добавить"  Background="AliceBlue" Click="Add_Click" HorizontalAlignment="Left" Margin="813,579,0,0" VerticalAlignment="Top" Width="200" />
+
+        <TextBox Text="" Name="tbNumVedBottom" Margin="35,526,984,50" FontSize="18"/>
+        <TextBlock Text="№ ведомости" TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,594,984,11" Width="110"/>
+
+        <Button Content="Удалить(по Id)"  Background="AliceBlue" Click="Delete_Click" HorizontalAlignment="Left" Margin="565,579,0,0" VerticalAlignment="Top" Width="200" RenderTransformOrigin="-0.132,0.5" />
+        <TextBox Text="" Name="tbId" Margin="173,526,846,50" FontSize="18"/>
+        <TextBlock Text="Id" TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,594,846,11" Width="111"/>
+
+
+        <Button Content="Добавить № ведомости"  Background="AliceBlue" Name="AddNumVed" Click="AddNumVed_Click"  HorizontalAlignment="Left" Margin="335,579,0,0" VerticalAlignment="Top" Width="200" RenderTransformOrigin="-0.132,0.5" />
+
+
+        <Button x:Name="BtnBack" Background="SlateBlue"  Height="60" Width="60" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Style="{StaticResource MaterialDesignFloatingActionButton}" Click="BtnBack_Click">
+            <materialDesign:PackIcon Kind="ArrowLeft" Width="25" Height="25" Foreground="White"/>
+        </Button>
+    </Grid>
+</UserControl>
