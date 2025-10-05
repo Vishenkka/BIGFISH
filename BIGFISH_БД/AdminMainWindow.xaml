@@ -115,8 +115,17 @@
                                 <TextBlock Text="Допы" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
                             </StackPanel>
                         </ListViewItem>
+
+                        <!-- ДОБАВЬТЕ ЭТОТ НОВЫЙ ЭЛЕМЕНТ -->
+                        <ListViewItem Height="60" x:Name="ItemStatistics">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ChartBar" Height="25" Width="25" Margin="10"/>
+                                <TextBlock Text="Статистика" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
+                            </StackPanel>
+                        </ListViewItem>
                     </ListView>
                 </StackPanel>
+                
             </Grid>
 
         </Grid>

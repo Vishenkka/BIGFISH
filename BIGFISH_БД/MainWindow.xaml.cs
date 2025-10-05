@@ -142,6 +142,8 @@ namespace BIGFISH_БД
             GridMain.Children.Add(firstWindow);
         }
 
+        
+
         private void Contact_Click(object sender, RoutedEventArgs e)
         {
             GridMain.Children.Clear();

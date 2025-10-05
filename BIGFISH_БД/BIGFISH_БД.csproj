@@ -294,6 +294,9 @@
     <Compile Include="Packers.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="StatisticPage.xaml.cs">
+      <DependentUpon>StatisticPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Storage.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -404,6 +407,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="PackerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StatisticPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
