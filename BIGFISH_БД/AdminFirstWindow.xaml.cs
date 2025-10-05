@@ -27,7 +27,7 @@ namespace BIGFISH_БД
 
         private void DailyReport_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = Window.GetWindow(this) as MainWindow;
+            var mainWindow = Window.GetWindow(this) as AdminMainWindow;
             if (mainWindow != null)
             {
                 mainWindow.ShowDailyReport();
@@ -43,7 +43,7 @@ namespace BIGFISH_БД
 
         private void ReportFoundry_Click(object sender, RoutedEventArgs e)
         {
-            var datePickFoundry = new DatePickFoundry();
+            var datePickFoundry = new AdminMainWindow();
             datePickFoundry.ShowDialog();
         }
 
@@ -55,7 +55,7 @@ namespace BIGFISH_БД
 
         private void DopReport_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = Window.GetWindow(this) as MainWindow;
+            var mainWindow = Window.GetWindow(this) as AdminMainWindow;
             if (mainWindow != null)
             {
                 mainWindow.ShowChooseDop();
@@ -64,7 +64,7 @@ namespace BIGFISH_БД
 
         private void OnePersonReport_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = Window.GetWindow(this) as MainWindow;
+            var mainWindow = Window.GetWindow(this) as AdminMainWindow;
             if (mainWindow != null)
             {
                 mainWindow.ShowChooseForOnePerson();

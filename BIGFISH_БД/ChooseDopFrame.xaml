@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BIGFISH_БД"
+             xmlns:local="clr-namespace:BIGFISH_БД" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="630" d:DesignWidth="1130">
         <Grid>
@@ -19,5 +19,8 @@
         <Button x:Name="AdvancePackers"  Background="AliceBlue" Height="50" Width="300" Content="Упаковщицы" FontSize="25" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,100,0" Click="AdvancePackers_Click"/>
         <Button x:Name="AdvanceFoundry" Background="AliceBlue" Height="50" Width="300" Content="Литейщики" Click="AdvanceFoundry_Click"  FontSize="25" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,200,100,0"/>
 
+        <Button x:Name="BtnBack" Background="SlateBlue"  Height="60" Width="60" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Style="{StaticResource MaterialDesignFloatingActionButton}" Click="BtnBack_Click">
+            <materialDesign:PackIcon Kind="ArrowLeft" Width="25" Height="25" Foreground="White"/>
+        </Button>
     </Grid>
 </UserControl>

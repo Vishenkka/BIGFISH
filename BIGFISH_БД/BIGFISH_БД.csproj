@@ -258,9 +258,6 @@
     <Compile Include="DopPage.xaml.cs">
       <DependentUpon>DopPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FilterPackers.xaml.cs">
-      <DependentUpon>FilterPackers.xaml</DependentUpon>
-    </Compile>
     <Compile Include="FirstWindow.xaml.cs">
       <DependentUpon>FirstWindow.xaml</DependentUpon>
     </Compile>
@@ -379,10 +376,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DopPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="FilterPackers.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -60,5 +60,19 @@ namespace BIGFISH_БД
                 mainWindow.ShowAdvFoundry();
             }
         }
+
+        private void BtnBack_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Window.GetWindow(this) as MainWindow;
+            var adminMainWindow = Window.GetWindow(this) as AdminMainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.ShowFirstWindow();
+            }
+            else
+            {
+                adminMainWindow.ShowAdminFirstWindow();
+            }
+        }
     }
 }
