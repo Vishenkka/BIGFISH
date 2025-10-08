@@ -3,204 +3,40 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BIGFISH_БД" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:local="clr-namespace:BIGFISH_БД"  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="630" d:DesignWidth="1130">
+    <Viewbox Stretch="Uniform">
 
-    <UserControl.Resources>
-        <Style x:Key="StatCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#FFE0E0E0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Color="#FFAAAAAA"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <Grid>
+            <TextBlock Text="Добро пожаловать!" FontSize="40" Foreground="SlateBlue" Margin="0,66,0,0" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            <TextBlock Text="Заполнить ежедневные данные о сборке" TextAlignment="Center" TextWrapping="Wrap" Foreground="SlateBlue" FontSize="20" Height="130" Width="300" Margin="91,213,739,287"/>
+            <materialDesign:PackIcon Kind="Number1Circle"  Height="25" Width="25" Margin="61,213,0,0" Foreground="SlateBlue"/>
+            <Button x:Name="DailyReport" Click="DailyReport_Click" Background="AliceBlue" Content="К таблице" Width="200" FontSize="19" Margin="141,290,789,308"/>
 
-        <Style x:Key="ValueTextStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="24"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="SlateBlue"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-        </Style>
+            <TextBlock Text="Сформировать отчет об упаковщицах" Foreground="SlateBlue" TextWrapping="Wrap" TextAlignment="Center"  FontSize="20" Height="130" Width="300" Margin="415,429,415,131"/>
+            <materialDesign:PackIcon Kind="Number2Circle"  Height="25" Width="25" Margin="425,213,415,287" Foreground="SlateBlue"/>
+            <Button x:Name="ReportPackers" Click="ReportPackers_Click"  Background="AliceBlue" Content="Сформировать" Width="200" FontSize="19" Margin="465,524,465,134"/>
 
-        <Style x:Key="LabelTextStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Foreground" Value="#FF666666"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="TextWrapping" Value="Wrap"/>
-        </Style>
-    </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="20">
-            <Border Style="{StaticResource StatCardStyle}">
-                <StackPanel>
-                    <TextBlock Text="Рабочая статистика" FontSize="28" FontWeight="Bold" Foreground="SlateBlue" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+            <TextBlock Text="Сформировать отчет о литейщиках" TextAlignment="Center" TextWrapping="Wrap" Foreground="SlateBlue" FontSize="20" Width="300" Margin="91,429,739,125"/>
+            <materialDesign:PackIcon Kind="Number4Circle"  Height="25" Width="25" Margin="74,405,0,0" Foreground="SlateBlue"/>
+            <Button x:Name="ReportFoundry" Click="ReportFoundry_Click"  Background="AliceBlue" Content="Сформировать" Width="200" FontSize="19" Margin="141,524,789,134"/>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
-                        <TextBlock Text="Период:" VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0"/>
-                        <DatePicker x:Name="dpStartDate" materialDesign:HintAssist.Hint="Начальная дата" Width="150" Margin="0,0,20,0" FontSize="14"/>
+            <TextBlock Text="Сформировать итоговый отчет о зарплате" TextWrapping="Wrap" Foreground="SlateBlue" FontSize="20" Width="250" Height="90" TextAlignment="Center" Margin="804,429,76,171"/>
+            <materialDesign:PackIcon Kind="Number6Circle"  Height="25" Width="25" Margin="779,405,0,0" Foreground="SlateBlue" RenderTransformOrigin="0.528,0.624"/>
+            <Button x:Name="TotalReport" Click="TotalReport_Click"  Background="AliceBlue" Content="Сформировать" Width="200" FontSize="19" Margin="829,524,101,134"/>
 
-                        <DatePicker x:Name="dpEndDate" materialDesign:HintAssist.Hint="Конечная дата" Width="150" Margin="0,0,20,0" FontSize="14"/>
 
-                        <Button x:Name="btnLoadStatistics" Content="Показать статистику" Background="AliceBlue" Foreground="SlateBlue" BorderBrush="SlateBlue" FontSize="14" FontWeight="SemiBold" Padding="15,8">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
-                                    <Setter Property="materialDesign:RippleAssist.Feedback" Value="SlateBlue"/>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+            <TextBlock Text="Заполнить данные о допах и авансе" TextWrapping="Wrap" Foreground="SlateBlue" FontSize="20" Width="250" Height="90" TextAlignment="Center" Margin="440,243,440,357"/>
+            <materialDesign:PackIcon Kind="Number5Circle"  Height="26" Width="25" Margin="425,404,0,0" Foreground="SlateBlue" RenderTransformOrigin="0.606,0.662"/>
+            <Button x:Name="DopReport" Click="DopReport_Click"  Background="AliceBlue" Content="К таблицам" Width="200" FontSize="19" Margin="465,320,465,338"/>
 
-                <StackPanel Grid.Column="0">
-                    <Border Style="{StaticResource StatCardStyle}">
-                        <StackPanel>
-                            <TextBlock Text="Общая статистика" FontSize="18" FontWeight="Bold" 
-                                       Foreground="SlateBlue" Margin="0,0,0,15"/>
 
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+            <TextBlock Text="Сформировать отчет по дням" TextWrapping="Wrap" Foreground="SlateBlue" FontSize="20" Width="250" Height="90" TextAlignment="Center" Margin="804,243,76,357"/>
+            <materialDesign:PackIcon Kind="Number3Circle"  Height="26" Width="25" Margin="779,213,0,0" Foreground="SlateBlue" RenderTransformOrigin="0.606,0.662"/>
+            <Button x:Name="OnePersonReport" Click="OnePersonReport_Click"  Background="AliceBlue" Content="Сформировать" Width="200" FontSize="19" Margin="829,320,101,338"/>
 
-                                <Border Grid.Row="0" Grid.Column="0" Margin="5">
-                                    <StackPanel>
-                                        <TextBlock x:Name="tbTotalLures" Text="0" Style="{StaticResource ValueTextStyle}"/>
-                                        <TextBlock Text="Всего приманок" Style="{StaticResource LabelTextStyle}"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Row="0" Grid.Column="1" Margin="5">
-                                    <StackPanel>
-                                        <TextBlock x:Name="tbTotalDefects" Text="0" Style="{StaticResource ValueTextStyle}"/>
-                                        <TextBlock Text="Всего брака" Style="{StaticResource LabelTextStyle}"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Row="0" Grid.Column="2" Margin="5">
-                                    <StackPanel>
-                                        <TextBlock x:Name="tbDefectPercentage" Text="0%" Style="{StaticResource ValueTextStyle}"/>
-                                        <TextBlock Text="Процент брака" Style="{StaticResource LabelTextStyle}"/>
-                                    </StackPanel>
-                                </Border>
-                                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="5" Padding="10"
-                                        Background="AliceBlue" CornerRadius="6">
-                                    <StackPanel>
-                                        <TextBlock Text="Лучшая упаковщица" FontWeight="SemiBold" 
-                                                   Foreground="SlateBlue" HorizontalAlignment="Center"/>
-                                        <TextBlock x:Name="tbBestPacker" Text="-" 
-                                                   FontSize="16" FontWeight="Bold"
-                                                   HorizontalAlignment="Center" 
-                                                   Margin="0,5,0,0"/>
-                                        <TextBlock Text="Меньше всего штрафных пачек" 
-                                                   FontSize="12" Foreground="#FF666666"
-                                                   HorizontalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="5" Padding="10" Background="AliceBlue" CornerRadius="6">
-                                    <StackPanel>
-                                        <TextBlock Text="Лучший литейщик" FontWeight="SemiBold" 
-                                                   Foreground="SlateBlue" HorizontalAlignment="Center"/>
-                                        <TextBlock x:Name="tbBestFoundry" Text="-" 
-                                                   FontSize="16" FontWeight="Bold"
-                                                   HorizontalAlignment="Center" 
-                                                   Margin="0,5,0,0"/>
-                                        <TextBlock Text="Меньше всего бракованных пачек" 
-                                                   FontSize="12" Foreground="#FF666666"
-                                                   HorizontalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-
-                    <Border Style="{StaticResource StatCardStyle}">
-                        <StackPanel>
-                            <TextBlock Text="Статистика по артикулам" FontSize="18" FontWeight="Bold" 
-                                       Foreground="SlateBlue" Margin="0,0,0,15"/>
-
-                            <Border Background="AliceBlue" CornerRadius="6" Padding="10" Margin="0,5">
-                                <StackPanel>
-                                    <TextBlock Text="Артикул с наибольшим процентом брака" 
-                                               FontWeight="SemiBold" Foreground="SlateBlue"
-                                               HorizontalAlignment="Center"/>
-                                    <TextBlock x:Name="tbWorstArticle" Text="-" 
-                                               FontSize="16" FontWeight="Bold"
-                                               HorizontalAlignment="Center" 
-                                               Margin="0,5,0,0"/>
-                                    <TextBlock x:Name="tbWorstArticlePercentage" Text="-" 
-                                               FontSize="14" Foreground="#FF666666"
-                                               HorizontalAlignment="Center"/>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-
-                <StackPanel Grid.Column="1">
-                    <Border Style="{StaticResource StatCardStyle}" Height="400">
-                        <StackPanel>
-                            <TextBlock Text="Соотношение брака" FontSize="18" FontWeight="Bold" 
-                                       Foreground="SlateBlue" Margin="0,0,0,15"
-                                       HorizontalAlignment="Center"/>
-
-                            <lvc:PieChart x:Name="DefectChart" 
-                                         Series="{Binding SeriesCollection}"
-                                         LegendLocation="Bottom"
-                                         InnerRadius="100"
-                                         Hoverable="True"
-                                         DataTooltip="{x:Null}"
-                                         Height="300">
-                                <lvc:PieChart.ChartLegend>
-                                    <lvc:DefaultLegend BulletSize="15" FontSize="12"/>
-                                </lvc:PieChart.ChartLegend>
-                            </lvc:PieChart>
-
-                            <TextBlock x:Name="tbChartNote" Text="Выберите период для отображения статистики" 
-                                       FontSize="12" FontStyle="Italic" Foreground="#FF666666"
-                                       HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Grid>
-            
-            
-            <Border x:Name="loadingMessage" Visibility="Collapsed" 
-                    Style="{StaticResource StatCardStyle}" 
-                    Background="AliceBlue">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <materialDesign:PackIcon Kind="Refresh" Width="40" Height="40" 
-                                            Foreground="SlateBlue" 
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="Загрузка статистики..." 
-                               FontSize="16" FontWeight="SemiBold"
-                               Foreground="SlateBlue" 
-                               HorizontalAlignment="Center"
-                               Margin="0,10,0,0"/>
-                </StackPanel>
-            </Border>
-        </StackPanel>
-    </ScrollViewer>
+        </Grid>
+    </Viewbox>
 </UserControl>

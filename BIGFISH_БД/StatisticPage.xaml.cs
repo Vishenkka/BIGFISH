@@ -25,13 +25,6 @@ namespace BIGFISH_БД
             InitializeComponent();
         }
 
-        private void BtnBack_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Window.GetWindow(this) as AdminMainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.ShowAdminFirstWindow();
-            }
-        }
+        BigFishBDEntities db;
     }
 }
