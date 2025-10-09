@@ -43,7 +43,7 @@ namespace BIGFISH_БД
 
         private void ReportFoundry_Click(object sender, RoutedEventArgs e)
         {
-            var datePickFoundry = new AdminMainWindow();
+            var datePickFoundry = new DatePickFoundry();
             datePickFoundry.ShowDialog();
         }
 

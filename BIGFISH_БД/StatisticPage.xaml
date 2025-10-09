@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BIGFISH_БД" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:BIGFISH_БД"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="630" d:DesignWidth="1100">
@@ -50,7 +51,8 @@
 
                         <DatePicker x:Name="dpEndDate" materialDesign:HintAssist.Hint="Конечная дата" Width="150" Margin="0,0,20,0" FontSize="14"/>
 
-                        <Button x:Name="btnLoadStatistics" Content="Показать статистику" Background="AliceBlue" Foreground="SlateBlue" BorderBrush="SlateBlue" FontSize="14" FontWeight="SemiBold" Padding="15,8">
+                        <Button x:Name="btnLoadStatistics" Content="Показать статистику" Background="AliceBlue" Foreground="SlateBlue" BorderBrush="SlateBlue" FontSize="14" FontWeight="SemiBold" Padding="15,8"
+                                Click="BtnLoadStatistics_Click">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
                                     <Setter Property="materialDesign:RippleAssist.Feedback" Value="SlateBlue"/>
