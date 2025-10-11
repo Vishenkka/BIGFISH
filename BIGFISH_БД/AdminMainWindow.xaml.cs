@@ -83,7 +83,12 @@ namespace BIGFISH_БД
                     usc = new StatisticPage();
                     GridMain.Children.Add(usc);
                     break;
-                    
+
+                case "ItemStatisticsArticle":
+                    usc = new StatisticArticlePage();
+                    GridMain.Children.Add(usc);
+                    break;
+
 
                 default: break;
             }
