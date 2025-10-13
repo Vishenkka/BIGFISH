@@ -78,43 +78,7 @@
                         <Image Height="80" VerticalAlignment="Bottom"/>
                     </Grid>
                     <ListView x:Name="ListViewMenu" Foreground="SkyBlue"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="ListViewMenu_SelectionChanged">
-                        <ListViewItem x:Name="ItemPackers" Height="60">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ViewDashboard" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="Упаковщицы" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem x:Name="ItemFoundry" Height="60">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ViewDashboard" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="Литейщики" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem x:Name="ItemTypeOfFish" Height="60">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ViewDashboard" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="Типы изделий" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem Height="60" x:Name="ItemArticles">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ViewDashboard" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="Артикулы" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem Height="60" x:Name="ItemStorage">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ViewDashboard" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="Склады" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
-                            </StackPanel>
-                        </ListViewItem>
-
-                        <ListViewItem Height="60" x:Name="ItemDop">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ViewDashboard" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="Допы" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
-                            </StackPanel>
-                        </ListViewItem>
+                       
                         <ListViewItem Height="60" x:Name="ItemStatistics">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="ChartBar" Height="25" Width="25" Margin="10"/>
@@ -125,9 +89,23 @@
                         <ListViewItem Height="60" x:Name="ItemStatisticsArticle">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Fish" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="Статистика артикула" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
+                                <TextBlock Text="Артикулы" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
                             </StackPanel>
                         </ListViewItem>
+                        <ListViewItem Height="60" x:Name="ItemStatisticsFoundry">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Head" Height="25" Width="25" Margin="10"/>
+                                <TextBlock Text="Литейщики" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
+                            </StackPanel>
+                        </ListViewItem>
+                        <ListViewItem Height="60" x:Name="ItemStatisticsPackers">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Head" Height="25" Width="25" Margin="10"/>
+                                <TextBlock Text="Упаковщицы" VerticalAlignment="Center" Margin="20 10" FontSize="16"/>
+                            </StackPanel>
+                        </ListViewItem>
+
+
                     </ListView>
                 </StackPanel>
                 

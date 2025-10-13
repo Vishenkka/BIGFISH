@@ -294,6 +294,12 @@
     <Compile Include="StatisticArticlePage.xaml.cs">
       <DependentUpon>StatisticArticlePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StatisticOnePacker.xaml.cs">
+      <DependentUpon>StatisticOnePacker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StatisticOnePerson.xaml.cs">
+      <DependentUpon>StatisticOnePerson.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StatisticPage.xaml.cs">
       <DependentUpon>StatisticPage.xaml</DependentUpon>
     </Compile>
@@ -407,6 +413,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="StatisticArticlePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StatisticOnePacker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StatisticOnePerson.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

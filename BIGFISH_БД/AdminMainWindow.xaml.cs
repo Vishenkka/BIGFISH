@@ -52,32 +52,7 @@ namespace BIGFISH_БД
 
             switch (((ListViewItem)((ListView)sender).SelectedItem).Name)
             {
-                case "ItemPackers":
-                    usc = new PackerPage();
-                    GridMain.Children.Add(usc);
-
-                    break;
-                case "ItemFoundry":
-                    usc = new FoundryPage();
-                    GridMain.Children.Add(usc);
-                    break;
-                case "ItemStorage":
-                    usc = new StoragePage();
-                    GridMain.Children.Add(usc);
-                    break;
-                case "ItemTypeOfFish":
-                    usc = new ArticlesPage();
-                    GridMain.Children.Add(usc);
-                    break;
-                case "ItemArticles":
-                    usc = new ColorArticlesPage();
-                    GridMain.Children.Add(usc);
-                    break;
-
-                case "ItemDop":
-                    usc = new DopPage();
-                    GridMain.Children.Add(usc);
-                    break;
+                
 
                 case "ItemStatistics":
                     usc = new StatisticPage();
@@ -87,6 +62,16 @@ namespace BIGFISH_БД
                 case "ItemStatisticsArticle":
                     usc = new StatisticArticlePage();
                     GridMain.Children.Add(usc);
+                    break;
+
+                case "ItemStatisticsFoundry":
+                    usc = new StatisticOnePerson();
+                    GridMain.Children.Add(usc);
+                    break;
+
+                case "ItemStatisticsPackers":
+                    //usc = new StatisticArticlePage();
+                    //GridMain.Children.Add(usc);
                     break;
 
 
