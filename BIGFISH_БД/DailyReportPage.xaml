@@ -35,8 +35,8 @@
                 <DataGridTextColumn Binding="{Binding FIO}" Width="100" Header="Упаковщица"/>
                 <DataGridTextColumn Binding="{Binding ArticlePack}" Width="85" Header="Артикул"/>
                 <DataGridTextColumn Binding="{Binding StorageName}" Width="70" Header="Склад"/>
-                <DataGridTextColumn Binding="{Binding FinePacks}" Width="80" Header="Штраф"/>
                 <DataGridTextColumn Binding="{Binding Packs}" Width="80" Header="Пачки"/>
+                <DataGridTextColumn Binding="{Binding FinePacks}" Width="80" Header="Штраф"/>
                 <DataGridTextColumn Binding="{Binding DateFoundry, StringFormat='dd/MM/yyyy'}" Width="90" Header="Дата литья"/>
                 <DataGridTextColumn Binding="{Binding FIO_Foundry}" Width="100" Header="Литейщик"/>
                 <DataGridTextColumn Binding="{Binding ArticleFoundry}" Width="85" Header="Артикул"/>
@@ -54,14 +54,15 @@
         <TextBlock Text="Артикул" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,707,44" Width="197"/>
         <ComboBox Name="tbArticle"  KeyDown="UIElement_KeyDown" TextBoxBase.TextChanged="tbArticle_TextChanged" IsEditable="True" FontSize="18" HorizontalAlignment="Right" Height="55" Margin="0,454,812,0" VerticalAlignment="Top" Width="100" TextSearch.TextPath="Article" ItemsSource="{Binding Articles}" DisplayMemberPath="Article" SelectedValuePath="Article"/>
 
-        <TextBlock Text="Склад" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,591,44" Width="197"/>
+        <TextBlock Text="Склад" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,729,44" Width="59"/>
         <ComboBox Name="tbStorageName"  KeyDown="UIElement_KeyDown" TextBoxBase.TextChanged="tbStorageName_TextChanged" IsEditable="True" FontSize="18" HorizontalAlignment="Right" Height="55" Margin="0,454,707,0" VerticalAlignment="Top" Width="100" TextSearch.TextPath="StorageName" ItemsSource="{Binding Storage}" DisplayMemberPath="StorageName" SelectedValuePath="StorageName"/>
 
-        <TextBlock Text="Штрафные пачки" TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,613,44" Width="84"/>
-        <TextBox Name="tbFinePacks"  KeyDown="UIElement_KeyDown" Margin="434,454,613,121" FontSize="18"/>
+        <TextBlock Text="Кол-во пачек" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,605,44" Width="100"/>
+        <TextBox Name="tbcolvoPacks"  KeyDown="UIElement_KeyDown" Margin="435,454,611,121" FontSize="18"/>
 
-        <TextBlock Text="Кол-во пачек" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,410,44" Width="197"/>
-        <TextBox Name="tbcolvoPacks"  KeyDown="UIElement_KeyDown" Margin="538,454,508,121" FontSize="18"/>
+        <TextBlock Text="Штрафные пачки" TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,505,44" Width="84"/>
+        <TextBox Name="tbFinePacks"  KeyDown="UIElement_KeyDown" Margin="540,454,507,121" FontSize="18"/>
+
 
         <TextBlock Text="Дата литья" TextWrapping="Wrap" HorizontalAlignment="Right" FontSize="16" Margin="0,521,294,44" Width="197"/>
         <DatePicker Name="dpDateFoundry" PreviewKeyDown="UIElement_KeyDown" DisplayDateStart="2020-01-01" DisplayDateEnd="2099-01-01" Margin="647,484,410,121"/>

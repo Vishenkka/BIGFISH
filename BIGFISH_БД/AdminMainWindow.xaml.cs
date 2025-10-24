@@ -70,8 +70,8 @@ namespace BIGFISH_БД
                     break;
 
                 case "ItemStatisticsPackers":
-                    //usc = new StatisticArticlePage();
-                    //GridMain.Children.Add(usc);
+                    usc = new StatisticOnePacker();
+                    GridMain.Children.Add(usc);
                     break;
 
 
@@ -150,7 +150,7 @@ namespace BIGFISH_БД
 
             string backupPath = saveDialog.FileName;
 
-            using (var connection = new SqlConnection(@"data source=V_ISHENKA\SQLEXPRESS;initial catalog=BigFishBD;integrated security=True;"))
+            using (var connection = new SqlConnection(@"data source=SERVER-1C\SQLEXPRESS;initial catalog=BigFishBD;integrated security=True;"))
             {
                 connection.Open();
                 var command = new SqlCommand(
