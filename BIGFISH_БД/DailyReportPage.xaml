@@ -94,5 +94,7 @@
         <Button x:Name="BtnBack"  KeyDown="UIElement_KeyDown" Background="SlateBlue" Height="60" Width="60" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Style="{StaticResource MaterialDesignFloatingActionButton}" Click="BtnBack_Click">
             <materialDesign:PackIcon Kind="ArrowLeft" Width="25" Height="25" Foreground="White"/>
         </Button>
+
+        <Button Content="Обновить таблицу" KeyDown="UIElement_KeyDown" Background="AliceBlue" Click="RefreshTable_Click" HorizontalAlignment="Left" Margin="953,56,0,0" VerticalAlignment="Top" Width="161"/>
     </Grid>
 </UserControl>

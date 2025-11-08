@@ -342,6 +342,33 @@ namespace BIGFISH_БД
             changeDailyReport.Show();
         }
 
-       
+        private void RefreshTable_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                db = new BigFishBDEntities();
+
+                dailyReport = db.DailyReport.ToList();
+                TablDailyRep.ItemsSource = dailyReport;
+
+                LoadArticlesData();
+                LoadPackersData();
+                LoadStorageData();
+                LoadFoundryData();
+                LoadColorArticles2Data();
+
+                if (TablDailyRep.Items.Count > 0)
+                {
+                    var lastItem = TablDailyRep.Items[TablDailyRep.Items.Count - 1];
+                    TablDailyRep.ScrollIntoView(lastItem);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при обновлении таблицы: " + ex.Message);
+            }
+        }
+
     }
 }

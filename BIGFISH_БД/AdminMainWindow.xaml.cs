@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -144,35 +145,73 @@ namespace BIGFISH_БД
 
         private void Export_Click(object sender, RoutedEventArgs e)
         {
-            var saveDialog = new SaveFileDialog();
-            saveDialog.Filter = "Backup Files (*.bak)|*.bak";
-            if (saveDialog.ShowDialog() != true) return;
-
-            string backupPath = saveDialog.FileName;
-
-            using (var connection = new SqlConnection(@"data source=SERVER-1C\SQLEXPRESS;initial catalog=BigFishBD;integrated security=True;"))
+            try
             {
-                connection.Open();
-                var command = new SqlCommand(
-                    $"BACKUP DATABASE [BigFishBD] TO DISK = '{backupPath}' WITH FORMAT, INIT",
-                    connection
-                );
-                command.ExecuteNonQuery();
-                MessageBox.Show("Резервная копия создана!");
+                var saveDialog = new SaveFileDialog();
+                saveDialog.Filter = "Backup Files (*.bak)|*.bak";
+                saveDialog.FileName = $"BigFishBD_Backup_{DateTime.Now:yyyyMMdd_HHmmss}.bak";
+
+                if (saveDialog.ShowDialog() != true) return;
+
+                string backupPath = saveDialog.FileName;
+
+                // Проверяем путь на доступность
+                string directory = System.IO.Path.GetDirectoryName(backupPath);
+                if (!Directory.Exists(directory))
+                {
+                    MessageBox.Show("Указанная папка не существует!");
+                    return;
+                }
+
+                using (var connection = new SqlConnection(@"Data Source=V_ISHENKA\SQLEXPRESS;Initial Catalog=master;User Id=User1;Password=12345;"))
+                {
+                    connection.Open();
+
+                    var command = new SqlCommand(
+                        $"BACKUP DATABASE [BigFishBD] TO DISK = '{backupPath}' WITH FORMAT, INIT",
+                        connection
+                    );
+                    command.ExecuteNonQuery();
+                    MessageBox.Show($"Резервная копия создана!\n{backupPath}");
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                if (sqlEx.Message.Contains("Отказано в доступе") || sqlEx.Message.Contains("access denied"))
+                {
+                    MessageBox.Show($"Отказано в доступе к папке!\n\n" +
+                                  $"Решение:\n" +
+                                  $"1. Запустите приложение от имени администратора\n" +
+                                  $"2. Или настройте права для службы SQL Server на папку");
+                }
+                else
+                {
+                    MessageBox.Show($"Ошибка SQL: {sqlEx.Message}");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}");
             }
         }
 
         private void Import_Click(object sender, RoutedEventArgs e)
         {
-            var openDialog = new OpenFileDialog();
-            openDialog.Filter = "Backup Files (*.bak)|*.bak";
-            if (openDialog.ShowDialog() != true) return;
-
-            string backupPath = openDialog.FileName;
-
-            using (var connection = new SqlConnection(@"data source=V_ISHENKA\SQLEXPRESS;initial catalog=BigFishBD;integrated security=True;"))
+            try
             {
-                try
+                var openDialog = new OpenFileDialog();
+                openDialog.Filter = "Backup Files (*.bak)|*.bak";
+                if (openDialog.ShowDialog() != true) return;
+
+                string backupPath = openDialog.FileName;
+
+                if (!File.Exists(backupPath))
+                {
+                    MessageBox.Show("Файл резервной копии не найден!");
+                    return;
+                }
+
+                using (var connection = new SqlConnection(@"Data Source=V_ISHENKA\SQLEXPRESS;Initial Catalog=master;User Id=User1;Password=12345;"))
                 {
                     connection.Open();
 
@@ -188,6 +227,7 @@ namespace BIGFISH_БД
                     );
                     restoreCommand.ExecuteNonQuery();
 
+                    // 3. Возвращаем MULTI_USER режим
                     var multiUser = new SqlCommand(
                         @"ALTER DATABASE [BigFishBD] SET MULTI_USER",
                         connection
@@ -196,11 +236,13 @@ namespace BIGFISH_БД
 
                     MessageBox.Show("Данные восстановлены!");
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка: {ex.Message}");
-                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}");
+
+            }
+        
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)

@@ -46,7 +46,7 @@ namespace BIGFISH_БД
                 return;
             }
 
-            string connectionString = @"data source=SERVER-1C\SQLEXPRESS;initial catalog=BigFishBD;integrated security=True;";
+            string connectionString = @"data source=V_ISHENKA\SQLEXPRESS;initial catalog=BigFishBD;integrated security=True;";
 
             try
             {

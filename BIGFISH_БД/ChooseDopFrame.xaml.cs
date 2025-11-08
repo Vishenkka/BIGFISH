@@ -28,36 +28,56 @@ namespace BIGFISH_БД
         private void DopFoundry_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = Window.GetWindow(this) as MainWindow;
+            var adminMainWindow = Window.GetWindow(this) as AdminMainWindow;
             if (mainWindow != null)
             {
                 mainWindow.ShowDopReport();
+            }
+            else
+            {
+                adminMainWindow.ShowDopReport();
             }
         }
 
         private void DopPackers_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = Window.GetWindow(this) as MainWindow;
+            var adminMainWindow = Window.GetWindow(this) as AdminMainWindow;
             if (mainWindow != null)
             {
                 mainWindow.ShowDopPackers();
+            }
+            else
+            {
+                adminMainWindow.ShowDopPackers();
             }
         }
 
         private void AdvancePackers_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = Window.GetWindow(this) as MainWindow;
+            var adminMainWindow = Window.GetWindow(this) as AdminMainWindow;
             if (mainWindow != null)
             {
                 mainWindow.ShowAdvPackers();
+            }
+            else
+            {
+                adminMainWindow.ShowAdvPackers();
             }
         }
 
         private void AdvanceFoundry_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = Window.GetWindow(this) as MainWindow;
+            var adminMainWindow = Window.GetWindow(this) as AdminMainWindow;
             if (mainWindow != null)
             {
                 mainWindow.ShowAdvFoundry();
+            }
+            else
+            {
+                adminMainWindow.ShowAdvFoundry();
             }
         }
 
