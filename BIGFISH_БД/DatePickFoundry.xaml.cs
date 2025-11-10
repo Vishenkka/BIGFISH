@@ -42,11 +42,6 @@ namespace BIGFISH_БД
 
         private void GenerateCombinedFoundryReport(DateTime startDate, DateTime endDate)
         {
-            string connectionString = @"data source=V_ISHENKA\SQLEXPRESS,1433;
-            initial catalog=BigFishBD;
-            user id=User1;
-            password=12345;";
-
             try
             {
                 using (var db = new BigFishBDEntities())
@@ -65,7 +60,7 @@ namespace BIGFISH_БД
                     var moneyStyle = workbook.Style;
                     moneyStyle.NumberFormat.Format = "#,##0.00 ₽;-#,##0.00 ₽";
 
-                    //ТАБЛИЦА 1 Детализация по артикулам 
+                    //ТАБЛИЦА 1
                     var articleDetails = db.Foundry
                         .Select(f => new
                         {
@@ -151,80 +146,115 @@ namespace BIGFISH_БД
                     }
                     currentRow += 2;
 
-                    //ТАБЛИЦА 2 Сводные данные
-                    var sql = @"
-                                WITH AllFounders AS (
-                                    SELECT DISTINCT FIO_Foundry FROM Foundry
-                                    WHERE FIO_Foundry IN (
-                                        SELECT FIO_Foundry FROM DailyReport WHERE DatePack BETWEEN @start AND @end
-                                        UNION
-                                        SELECT FIO_Foundry FROM DopFoundry WHERE DateDop BETWEEN @start AND @end
-                                        UNION
-                                        SELECT FIO_Foundry FROM AdvancePayFoundry WHERE DateAdv BETWEEN @start AND @end
-                                    )
-                                ),
-                                DailyReportData AS (
-                                    SELECT 
-                                        f.FIO_Foundry,
-                                        SUM(ISNULL(dr.Packs2, 0)) AS TotalPacks,
-                                        SUM(ISNULL(dr.FinePacksFoundry, 0)) AS TotalFines,
-                                        SUM(ISNULL(dr.Packs2 * a.PriceFoundry, 0)) AS Литье,
-                                        SUM(ISNULL(CASE WHEN a.Type = 1 THEN dr.Packs2 ELSE 0 END, 0)) AS СтандартныеПачки,
-                                        SUM(ISNULL(dr.Packs2, 0)) AS ОбщееКолво,
-                                        SUM(ISNULL(dr.FinePacksFoundry, 0)) AS ПачкиСБраком
-                                    FROM AllFounders f
-                                    LEFT JOIN DailyReport dr ON f.FIO_Foundry = dr.FIO_Foundry AND dr.DatePack BETWEEN @start AND @end
-                                    LEFT JOIN Articles a ON dr.ArticleFoundry = a.Article
-                                    GROUP BY f.FIO_Foundry
-                                ),
-                                DopUslugi AS (
-                                    SELECT 
-                                        f.FIO_Foundry,
-                                        SUM(ISNULL(df.Colvo * df.PriceForOne, 0)) AS DopSum
-                                    FROM AllFounders f
-                                    LEFT JOIN DopFoundry df ON f.FIO_Foundry = df.FIO_Foundry AND df.DateDop BETWEEN @start AND @end
-                                    GROUP BY f.FIO_Foundry
-                                ),
-                                AdvancePayments AS (
-                                    SELECT 
-                                        f.FIO_Foundry,
-                                        SUM(ISNULL(ap.AdvancePay, 0)) AS TotalAdvance
-                                    FROM AllFounders f
-                                    LEFT JOIN AdvancePayFoundry ap ON f.FIO_Foundry = ap.FIO_Foundry AND ap.DateAdv BETWEEN @start AND @end
-                                    GROUP BY f.FIO_Foundry
-                                ),
-                                TotalPacks AS (
-                                    SELECT 
-                                        FIO_Foundry,
-                                        TotalPacks,
-                                        TotalFines
-                                    FROM DailyReportData
-                                )
-                                SELECT 
-                                    f.FIO_Foundry AS Литейщик,
-                                    ROUND(ISNULL(drd.Литье, 0), 2) AS [Литье],
-                                    ROUND(ISNULL(drd.СтандартныеПачки, 0), 2) AS [Стандартные пачки],
-                                    ROUND(ISNULL(drd.ОбщееКолво, 0), 2) AS [Общее кол-во],
-                                    ROUND(ISNULL(drd.ПачкиСБраком, 0), 2) AS [Пачки с браком],
-                                    CASE
-                                        WHEN ISNULL(tp.TotalFines, 0) > 0.05 * ISNULL(tp.TotalPacks, 1)
-                                        THEN ROUND((ISNULL(tp.TotalFines, 0) - (0.05 * ISNULL(tp.TotalPacks, 1))) * 12, 2)
-                                        ELSE 0
-                                    END AS Штрафы,
-                                    CASE 
-                                        WHEN ISNULL(drd.СтандартныеПачки, 0) = 
-                                             MAX(ISNULL(drd.СтандартныеПачки, 0)) OVER () 
-                                        THEN ROUND(ISNULL(drd.СтандартныеПачки, 0) * 3, 2) 
-                                        ELSE 0 
-                                    END AS Премия,
-                                    ISNULL(du.DopSum, 0) AS [Допы],
-                                    ISNULL(ap.TotalAdvance, 0) AS [АвансУдержания]
-                                FROM AllFounders f
-                                LEFT JOIN DailyReportData drd ON f.FIO_Foundry = drd.FIO_Foundry
-                                LEFT JOIN TotalPacks tp ON f.FIO_Foundry = tp.FIO_Foundry
-                                LEFT JOIN DopUslugi du ON f.FIO_Foundry = du.FIO_Foundry
-                                LEFT JOIN AdvancePayments ap ON f.FIO_Foundry = ap.FIO_Foundry
-                                ORDER BY f.FIO_Foundry";
+                    //ТАБЛИЦА 2
+                    var allFounders = db.Foundry
+                        .Where(f => db.DailyReport.Any(dr => dr.FIO_Foundry == f.FIO_Foundry && dr.DatePack >= startDate && dr.DatePack <= endDate) ||
+                                   db.DopFoundry.Any(df => df.FIO_Foundry == f.FIO_Foundry && df.DateDop >= startDate && df.DateDop <= endDate) ||
+                                   db.AdvancePayFoundry.Any(ap => ap.FIO_Foundry == f.FIO_Foundry && ap.DateAdv >= startDate && ap.DateAdv <= endDate))
+                        .Select(f => f.FIO_Foundry)
+                        .Distinct()
+                        .ToList();
+
+                    var allDailyData = db.DailyReport
+                        .Where(dr => dr.DatePack >= startDate && dr.DatePack <= endDate)
+                        .ToList();
+
+                    var allDopData = db.DopFoundry
+                        .Where(df => df.DateDop >= startDate && df.DateDop <= endDate)
+                        .ToList();
+
+                    var allAdvanceData = db.AdvancePayFoundry
+                        .Where(ap => ap.DateAdv >= startDate && ap.DateAdv <= endDate)
+                        .ToList();
+
+
+                    var dailyReportData = allDailyData
+                        .GroupBy(d => d.FIO_Foundry)
+                        .Select(g => new
+                        {
+                            FIO_Foundry = g.Key,
+                            TotalPacks = g.Sum(x => (decimal)(x.Packs2 ?? 0)),
+                            TotalFines = g.Sum(x => (decimal)(x.FinePacksFoundry ?? 0)),
+                            Литье = g.Sum(x => (decimal)(x.Packs2 ?? 0) * (x.Articles?.PriceFoundry ?? 0)),
+                            СтандартныеПачки = g.Where(x => x.Articles?.Type == 1).Sum(x => (decimal)(x.Packs2 ?? 0)),
+                            ОбщееКолво = g.Sum(x => (decimal)(x.Packs2 ?? 0)),
+                            ПачкиСБраком = g.Sum(x => (decimal)(x.FinePacksFoundry ?? 0))
+                        })
+                        .ToList();
+
+
+                    var dopUslugiData = allDopData
+                        .GroupBy(d => d.FIO_Foundry)
+                        .Select(g => new
+                        {
+                            FIO_Foundry = g.Key,
+                            DopSum = g.Sum(x => (decimal)(x.Colvo) * (decimal)(x.PriceForOne))
+                        })
+                        .ToList();
+
+
+                    var advancePaymentsData = allAdvanceData
+                        .GroupBy(a => a.FIO_Foundry)
+                        .Select(g => new
+                        {
+                            FIO_Foundry = g.Key,
+                            TotalAdvance = g.Sum(x => (decimal)(x.AdvancePay ?? 0))
+                        })
+                        .ToList();
+
+
+                    decimal maxStandardPacks = 0m;
+                    if (dailyReportData.Any())
+                    {
+                        maxStandardPacks = dailyReportData.Max(x => x.СтандартныеПачки);
+                    }
+
+
+                    var reportsList = allFounders
+                        .Select(f =>
+                        {
+                            var dailyData = dailyReportData.FirstOrDefault(d => d.FIO_Foundry == f);
+                            var dopData = dopUslugiData.FirstOrDefault(d => d.FIO_Foundry == f);
+                            var advanceData = advancePaymentsData.FirstOrDefault(a => a.FIO_Foundry == f);
+
+                            decimal totalPacks = dailyData != null ? dailyData.TotalPacks : 0m;
+                            decimal totalFines = dailyData != null ? dailyData.TotalFines : 0m;
+                            decimal литье = dailyData != null ? dailyData.Литье : 0m;
+                            decimal стандартныеПачки = dailyData != null ? dailyData.СтандартныеПачки : 0m;
+                            decimal общееКолво = dailyData != null ? dailyData.ОбщееКолво : 0m;
+                            decimal пачкиСБраком = dailyData != null ? dailyData.ПачкиСБраком : 0m;
+                            decimal допы = dopData != null ? dopData.DopSum : 0m;
+                            decimal авансУдержания = advanceData != null ? advanceData.TotalAdvance : 0m;
+
+
+                            decimal штрафы = 0m;
+                            if (totalFines > 0.05m * (totalPacks > 0 ? totalPacks : 1))
+                            {
+                                штрафы = Math.Round((totalFines - (0.05m * totalPacks)) * 12, 2);
+                            }
+
+
+                            decimal премия = 0m;
+                            if (стандартныеПачки > 0 && Math.Abs(стандартныеПачки - maxStandardPacks) < 0.001m)
+                            {
+                                премия = Math.Round(стандартныеПачки * 3, 2);
+                            }
+
+                            return new
+                            {
+                                Литейщик = f,
+                                Литье = Math.Round(литье, 2),
+                                Стандартные = Math.Round(стандартныеПачки, 2),
+                                ОбщееКолво = Math.Round(общееКолво, 2),
+                                Брак = Math.Round(пачкиСБраком, 2),
+                                Штрафы = штрафы,
+                                Премия = премия,
+                                Допы = допы,
+                                АвансУдержания = авансУдержания
+                            };
+                        })
+                        .OrderBy(r => r.Литейщик)
+                        .ToList();
 
                     var summaryHeaders = new[] { "Литейщик", "Литье", "Стандартные пачки", "Общее кол-во", "Пачки с браком", "Штрафы", "Премия", "Допы", "Аванс-удержания", "Итого" };
                     for (int i = 0; i < summaryHeaders.Length; i++)
@@ -234,37 +264,7 @@ namespace BIGFISH_БД
                     }
                     currentRow++;
 
-                    var reports = new List<dynamic>();
-                    using (var connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-                        using (var cmd = new SqlCommand(sql, connection))
-                        {
-                            cmd.Parameters.AddWithValue("@start", startDate);
-                            cmd.Parameters.AddWithValue("@end", endDate);
-
-                            using (var reader = cmd.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    reports.Add(new
-                                    {
-                                        Литейщик = reader["Литейщик"].ToString(),
-                                        Литье = reader["Литье"] != DBNull.Value ? Convert.ToDecimal(reader["Литье"]) : 0m,
-                                        Стандартные = reader["Стандартные пачки"] != DBNull.Value ? Convert.ToDecimal(reader["Стандартные пачки"]) : 0m,
-                                        ОбщееКолво = reader["Общее кол-во"] != DBNull.Value ? Convert.ToDecimal(reader["Общее кол-во"]) : 0m,
-                                        Брак = reader["Пачки с браком"] != DBNull.Value ? Convert.ToDecimal(reader["Пачки с браком"]) : 0m,
-                                        Штрафы = reader["Штрафы"] != DBNull.Value ? Convert.ToDecimal(reader["Штрафы"]) : 0m,
-                                        Премия = reader["Премия"] != DBNull.Value ? Convert.ToDecimal(reader["Премия"]) : 0m,
-                                        Допы = reader["Допы"] != DBNull.Value ? Convert.ToDecimal(reader["Допы"]) : 0m,
-                                        АвансУдержания = reader["АвансУдержания"] != DBNull.Value ? Convert.ToDecimal(reader["АвансУдержания"]) : 0m
-                                    });
-                                }
-                            }
-                        }
-                    }
-
-                    foreach (var report in reports)
+                    foreach (var report in reportsList)
                     {
                         worksheet.Cell(currentRow, 1).Value = report.Литейщик;
                         worksheet.Cell(currentRow, 2).Value = report.Литье;
@@ -293,10 +293,13 @@ namespace BIGFISH_БД
 
                     for (int col = 2; col <= 10; col++)
                     {
-                        var addressStart = worksheet.Cell(currentRow - reports.Count, col).Address;
-                        var addressEnd = worksheet.Cell(currentRow - 1, col).Address;
+                        int startRowNum = currentRow - reportsList.Count;
+                        int endRowNum = currentRow - 1;
 
-                        if (col == 3 || col == 4 || col == 5) // Для числовых колонок
+                        var addressStart = worksheet.Cell(startRowNum, col).Address;
+                        var addressEnd = worksheet.Cell(endRowNum, col).Address;
+
+                        if (col == 3 || col == 4 || col == 5) 
                             worksheet.Cell(currentRow, col).FormulaA1 = $"ROUND(SUM({addressStart}:{addressEnd}), 2)";
                         else
                             worksheet.Cell(currentRow, col).FormulaA1 = $"SUM({addressStart}:{addressEnd})";
