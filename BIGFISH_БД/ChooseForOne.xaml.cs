@@ -132,11 +132,6 @@ namespace BIGFISH_БД
                 return;
             }
 
-            string connectionString = @"data source=V_ISHENKA\SQLEXPRESS,1433;
-                                                        initial catalog=BigFishBD;
-                                                        user id=User1;
-                                                        password=12345;";
-
             try
             {
                 using (var db = new BigFishBDEntities())
@@ -144,7 +139,6 @@ namespace BIGFISH_БД
                 {
                     var worksheet = workbook.Worksheets.Add("Отчет");
 
-                    
                     var headerStyle = workbook.Style;
                     headerStyle.Font.Bold = true;
                     headerStyle.Fill.BackgroundColor = XLColor.Yellow;
@@ -160,112 +154,90 @@ namespace BIGFISH_БД
                     summaryStyle.Fill.BackgroundColor = XLColor.Yellow;
                     summaryStyle.NumberFormat.NumberFormatId = 2;
                     summaryStyle.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                    
+
                     var defaultStyle = workbook.Style;
                     defaultStyle.Border.OutsideBorder = XLBorderStyleValues.Thin;
 
-                    
                     worksheet.Cell(1, 1).Value = $"Отчет для упаковщицы {packerName} за период с {startDate:dd.MM.yyyy} по {endDate:dd.MM.yyyy}";
                     worksheet.Range(1, 1, 1, 18).Merge().Style = headerStyle;
 
-                    // Берутся ненулевые артикулы
+
                     var usedArticles = db.DailyReport
                         .Where(dr => dr.FIO == packerName &&
-                                     dr.DatePack >= startDate &&
-                                     dr.DatePack <= endDate &&
-                                     dr.Packs > 0)
+                                    dr.DatePack >= startDate &&
+                                    dr.DatePack <= endDate &&
+                                    dr.Packs > 0)
                         .Select(dr => dr.ArticlePack)
                         .Distinct()
                         .OrderBy(a => a)
                         .ToList();
 
-                    // для основной
-                    string mainTableSql = @"
-                    SELECT 
-                        dr.DatePack,
-                        dr.ArticlePack,
-                        dr.Packs as Packs,
-                        dr.FinePacks as Fines,
-                        a.PricePackers as Price
-                    FROM DailyReport dr
-                    JOIN Articles a ON dr.ArticlePack = a.Article
-                    WHERE dr.FIO = @packerName
-                        AND dr.DatePack BETWEEN @startDate AND @endDate
-                        AND dr.Packs > 0
-                    ORDER BY dr.DatePack, dr.ArticlePack";
 
-                    // вообще все для расчета штрафов и премий и тд
-                    string allDataSql = @"
-                    SELECT 
-                        dr.DatePack,
-                        dr.ArticlePack,
-                        dr.Packs as Packs,
-                        dr.FinePacks as Fines,
-                        dr.FinePacksFoundry as FinePacksFoundry,
-                        a.PricePackers as Price
-                    FROM DailyReport dr
-                    JOIN Articles a ON dr.ArticlePack = a.Article
-                    WHERE dr.FIO = @packerName
-                      AND dr.DatePack BETWEEN @startDate AND @endDate
-                    ORDER BY dr.DatePack, dr.ArticlePack";
-
-                    // заполнение основной табл
-                    var mainTableData = new List<PackerReportItem>();
-                    var allReportData = new List<PackerReportItem>();
-
-                    using (var connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-
-                        // данные для основной
-                        using (var cmd = new SqlCommand(mainTableSql, connection))
-                        {
-                            cmd.Parameters.AddWithValue("@packerName", packerName);
-                            cmd.Parameters.AddWithValue("@startDate", startDate);
-                            cmd.Parameters.AddWithValue("@endDate", endDate);
-
-                            using (var reader = cmd.ExecuteReader())
+                    var mainTableDataRaw = db.DailyReport
+                        .Where(dr => dr.FIO == packerName &&
+                                    dr.DatePack >= startDate &&
+                                    dr.DatePack <= endDate &&
+                                    dr.Packs > 0)
+                        .Join(db.Articles,
+                            dr => dr.ArticlePack,
+                            a => a.Article,
+                            (dr, a) => new
                             {
-                                while (reader.Read())
-                                {
-                                    var item = new PackerReportItem
-                                    {
-                                        DatePack = (DateTime)reader["DatePack"],
-                                        Article = reader["ArticlePack"].ToString(),
-                                        Packs = Math.Round(Convert.ToDecimal(reader["Packs"]), 2),
-                                        Fines = Convert.ToDecimal(reader["Fines"]),
-                                        Price = Convert.ToDecimal(reader["Price"])
-                                    };
-                                    mainTableData.Add(item);
-                                }
-                            }
-                        }
+                                DatePack = dr.DatePack,
+                                Article = dr.ArticlePack,
+                                Packs = dr.Packs ?? 0,
+                                Fines = dr.FinePacks ?? 0,
+                                Price = a.PricePackers
+                            })
+                        .OrderBy(x => x.DatePack)
+                        .ThenBy(x => x.Article)
+                        .ToList();
 
-                        // данные для расчетов
-                        using (var cmd = new SqlCommand(allDataSql, connection))
+
+                    var mainTableData = mainTableDataRaw
+                        .Select(x => new PackerReportItem
                         {
-                            cmd.Parameters.AddWithValue("@packerName", packerName);
-                            cmd.Parameters.AddWithValue("@startDate", startDate);
-                            cmd.Parameters.AddWithValue("@endDate", endDate);
+                            DatePack = (DateTime)x.DatePack,
+                            Article = x.Article,
+                            Packs = Math.Round((decimal)x.Packs, 2),
+                            Fines = (decimal)x.Fines,
+                            Price = (decimal)x.Price
+                        })
+                        .ToList();
 
-                            using (var reader = cmd.ExecuteReader())
+
+                    var allReportDataRaw = db.DailyReport
+                        .Where(dr => dr.FIO == packerName &&
+                                    dr.DatePack >= startDate &&
+                                    dr.DatePack <= endDate)
+                        .Join(db.Articles,
+                            dr => dr.ArticlePack,
+                            a => a.Article,
+                            (dr, a) => new
                             {
-                                while (reader.Read())
-                                {
-                                    var item = new PackerReportItem
-                                    {
-                                        DatePack = (DateTime)reader["DatePack"],
-                                        Article = reader["ArticlePack"].ToString(),
-                                        Packs = Math.Round(Convert.ToDecimal(reader["Packs"]), 2),
-                                        Fines = Convert.ToDecimal(reader["Fines"]),
-                                        FinePacksFoundry = Convert.ToDecimal(reader["FinePacksFoundry"]),
-                                        Price = Convert.ToDecimal(reader["Price"])
-                                    };
-                                    allReportData.Add(item);
-                                }
-                            }
-                        }
-                    }
+                                DatePack = dr.DatePack,
+                                Article = dr.ArticlePack,
+                                Packs = dr.Packs ?? 0,
+                                Fines = dr.FinePacks ?? 0,
+                                FinePacksFoundry = dr.FinePacksFoundry ?? 0,
+                                Price = a.PricePackers
+                            })
+                        .OrderBy(x => x.DatePack)
+                        .ThenBy(x => x.Article)
+                        .ToList();
+
+                    // Преобразуем после получения данных из БД
+                    var allReportData = allReportDataRaw
+                        .Select(x => new PackerReportItem
+                        {
+                            DatePack = (DateTime)x.DatePack,
+                            Article = x.Article,
+                            Packs = Math.Round((decimal)x.Packs, 2),
+                            Fines = (decimal)x.Fines,
+                            FinePacksFoundry = (decimal)x.FinePacksFoundry,
+                            Price = (decimal)x.Price
+                        })
+                        .ToList();
 
                     // допы
                     var additionalServices = db.DopPackers
@@ -273,7 +245,8 @@ namespace BIGFISH_БД
                         .OrderBy(x => x.DateDopPackers)
                         .ToList();
 
-                    decimal totalAdditionalServices = (decimal)additionalServices.Sum(x => x.Colvo * x.PriceForOne);
+                    decimal totalAdditionalServices = additionalServices.Sum(x =>
+                        ((decimal)(x.Colvo ?? 0)) * ((decimal)(x.PriceForOne ?? 0)));
 
                     // расчеты
                     decimal totalPacks = allReportData.Sum(x => x.Packs);
@@ -282,7 +255,6 @@ namespace BIGFISH_БД
                     decimal totalSalary = mainTableData.Sum(x => x.Packs * x.Price);
                     decimal totalPremium = totalFinePacksFoundry * 2;
                     decimal fineAmount = totalFines;
-                    
 
                     // заголовки
                     int row = 3;
@@ -306,13 +278,13 @@ namespace BIGFISH_БД
                             .Select(x => x.PricePackers)
                             .FirstOrDefault();
 
-                        worksheet.Cell(row, col).Value = price;
+                        worksheet.Cell(row, col).Value = (decimal)price;
                         worksheet.Cell(row, col).Style = moneyStyle;
                         col++;
                     }
                     row++;
 
-                    // Заполнение табл
+                    // Заполнение таблицы - КАЖДАЯ ЗАПИСЬ ОТДЕЛЬНОЙ СТРОКОЙ (как в оригинале)
                     foreach (var item in mainTableData.OrderBy(x => x.DatePack).ThenBy(x => x.Article))
                     {
                         col = 1;
@@ -355,7 +327,7 @@ namespace BIGFISH_БД
                     }
                     worksheet.Range(totalRow, 1, totalRow, usedArticles.Count + 1).Style = summaryStyle;
 
-                    // стр сумма
+                    // строка сумма
                     worksheet.Cell(sumRow, 1).Value = "Сумма";
                     col = 2;
 
@@ -374,32 +346,26 @@ namespace BIGFISH_БД
                     }
                     worksheet.Range(sumRow, 1, sumRow, usedArticles.Count + 1).Style = summaryStyle;
 
-                    // пустая строчка(?)
+                    // пустая строчка
                     worksheet.Row(emptyRowAfterSum).Height = 20;
 
-                    
                     worksheet.Cell(packingRow, 1).Value = "Упаковка:";
                     worksheet.Cell(packingRow, 2).Value = totalSalary;
                     worksheet.Cell(packingRow, 2).Style.NumberFormat.Format = "#,##0.00 ₽";
 
-                    
                     worksheet.Cell(fineRow, 1).Value = "Штрафные пачки";
                     worksheet.Cell(fineRow, 2).Value = fineAmount;
-                    
 
-                    
                     worksheet.Cell(premiumRow, 1).Value = "Доп. плата за брак";
                     worksheet.Cell(premiumRow, 2).Value = totalPremium;
                     worksheet.Cell(premiumRow, 2).Style.NumberFormat.Format = "#,##0.00 ₽";
 
-                    
                     worksheet.Cell(additionalServicesRow, 1).Value = "Доп. услуги";
                     worksheet.Cell(additionalServicesRow, 2).Value = totalAdditionalServices;
                     worksheet.Cell(additionalServicesRow, 2).Style.NumberFormat.Format = "#,##0.00 ₽";
 
-                    
                     worksheet.Cell(salaryRow, 1).Value = "Итого";
-                    worksheet.Cell(salaryRow, 2).Value = totalSalary + totalPremium  + totalAdditionalServices - totalFines*50;
+                    worksheet.Cell(salaryRow, 2).Value = totalSalary + totalPremium + totalAdditionalServices - totalFines * 50;
                     worksheet.Cell(salaryRow, 2).Style.NumberFormat.Format = "#,##0.00 ₽";
                     worksheet.Cell(salaryRow, 2).Style.Font.Bold = true;
 
@@ -419,8 +385,9 @@ namespace BIGFISH_БД
 
                         foreach (var service in additionalServices)
                         {
-                            worksheet.Cell(row, 1).Value = service.DateDopPackers.ToString("dd.MM.yyyy");
-                            worksheet.Cell(row, 2).Value = service.Colvo * service.PriceForOne;
+                            worksheet.Cell(row, 1).Value = service.DateDopPackers.ToString("dd.MM.yyyy") ?? "";
+                            decimal serviceAmount = ((decimal)(service.Colvo ?? 0)) * ((decimal)(service.PriceForOne ?? 0));
+                            worksheet.Cell(row, 2).Value = serviceAmount;
                             worksheet.Cell(row, 2).Style.NumberFormat.Format = "#,##0.00 ₽";
                             row++;
                         }
@@ -471,7 +438,6 @@ namespace BIGFISH_БД
                         worksheet.Range(row, 1, row, 2).Style = summaryStyle;
                     }
 
-                    
                     worksheet.Columns().AdjustToContents();
 
                     var tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(),
@@ -487,7 +453,6 @@ namespace BIGFISH_БД
             }
         }
 
-        
         public class PackerReportItem
         {
             public DateTime DatePack { get; set; }
@@ -497,7 +462,6 @@ namespace BIGFISH_БД
             public decimal FinePacksFoundry { get; set; }
             public decimal Price { get; set; }
         }
-
         private void DopReportFoundry_Click(object sender, RoutedEventArgs e)
         {
             if (dpStartDateFoundry.SelectedDate == null || dpEndDateFoundry.SelectedDate == null)
@@ -526,11 +490,6 @@ namespace BIGFISH_БД
                 MessageBox.Show("Не удалось получить имя литейщика!");
                 return;
             }
-
-            string connectionString = @"data source=V_ISHENKA\SQLEXPRESS,1433;
-                                                        initial catalog=BigFishBD;
-                                                        user id=User1;
-                                                        password=12345;";
 
             try
             {
@@ -561,7 +520,7 @@ namespace BIGFISH_БД
                     worksheet.Cell(1, 1).Value = $"Отчет для литейщика {foundryName} за период с {startDate:dd.MM.yyyy} по {endDate:dd.MM.yyyy}";
                     worksheet.Range(1, 1, 1, 18).Merge().Style = headerStyle;
 
-                    // данные для основной
+                    // данные для основной таблицы
                     var usedArticles = db.DailyReport
                         .Where(dr => dr.FIO_Foundry == foundryName &&
                                      dr.DatePack >= startDate &&
@@ -572,112 +531,96 @@ namespace BIGFISH_БД
                         .OrderBy(a => a)
                         .ToList();
 
-                    // для основной
-                    string mainTableSql = @"
-                                            SELECT 
-                                                dr.DateFoundry,
-                                                dr.DatePack,
-                                                dr.ArticleFoundry,
-                                                dr.Packs2 as Packs,
-                                                a.PriceFoundry
-                                            FROM DailyReport dr
-                                            JOIN Articles a ON dr.ArticleFoundry = a.Article
-                                            WHERE dr.FIO_Foundry = @foundryName
-                                              AND dr.DatePack BETWEEN @startDate AND @endDate
-                                              AND dr.Packs2 > 0
-                                            ORDER BY dr.DateFoundry, dr.DatePack, dr.ArticleFoundry";
-
-                    // для расчетов
-                    string allDataSql = @"
-                                            SELECT 
-                                                dr.DateFoundry,
-                                                dr.DatePack,
-                                                dr.ArticleFoundry,
-                                                dr.Packs2 as Packs,
-                                                dr.FinePacksFoundry as Fines,
-                                                a.PriceFoundry
-                                            FROM DailyReport dr
-                                            JOIN Articles a ON dr.ArticleFoundry = a.Article
-                                            WHERE dr.FIO_Foundry = @foundryName
-                                              AND dr.DatePack BETWEEN @startDate AND @endDate
-                                            ORDER BY dr.DateFoundry, dr.DatePack, dr.ArticleFoundry";
-
-                    // заполнение основнойц
-                    var mainTableData = new List<FoundryReportItem>();
-                    var allReportData = new List<FoundryReportItem>();
-
-                    using (var connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-
-                        // данные для основной
-                        using (var cmd = new SqlCommand(mainTableSql, connection))
-                        {
-                            cmd.Parameters.AddWithValue("@foundryName", foundryName);
-                            cmd.Parameters.AddWithValue("@startDate", startDate);
-                            cmd.Parameters.AddWithValue("@endDate", endDate);
-
-                            using (var reader = cmd.ExecuteReader())
+                    // данные для основной таблицы (ненулевые пачки) - сначала получаем данные, затем преобразуем
+                    var mainTableDataRaw = db.DailyReport
+                        .Where(dr => dr.FIO_Foundry == foundryName &&
+                                    dr.DatePack >= startDate &&
+                                    dr.DatePack <= endDate &&
+                                    dr.Packs2 > 0)
+                        .Join(db.Articles,
+                            dr => dr.ArticleFoundry,
+                            a => a.Article,
+                            (dr, a) => new
                             {
-                                while (reader.Read())
-                                {
-                                    var item = new FoundryReportItem
-                                    {
-                                        DateFoundry = (DateTime)reader["DateFoundry"],
-                                        DatePack = (DateTime)reader["DatePack"],
-                                        Article = reader["ArticleFoundry"].ToString(),
-                                        Packs = Math.Round(Convert.ToDecimal(reader["Packs"]), 2),
-                                        Price = Convert.ToDecimal(reader["PriceFoundry"])
-                                    };
-                                    mainTableData.Add(item);
-                                }
-                            }
-                        }
+                                DateFoundry = dr.DateFoundry,
+                                DatePack = dr.DatePack,
+                                Article = dr.ArticleFoundry,
+                                Packs = dr.Packs2 ?? 0,
+                                Price = a.PriceFoundry
+                            })
+                        .OrderBy(x => x.DatePack)
+                        .ThenBy(x => x.DateFoundry)
+                        .ThenBy(x => x.Article)
+                        .ToList();
 
-                        // для расчетов
-                        using (var cmd = new SqlCommand(allDataSql, connection))
+                    // Преобразуем после получения данных из БД
+                    var mainTableData = mainTableDataRaw
+                        .Select(x => new FoundryReportItem
                         {
-                            cmd.Parameters.AddWithValue("@foundryName", foundryName);
-                            cmd.Parameters.AddWithValue("@startDate", startDate);
-                            cmd.Parameters.AddWithValue("@endDate", endDate);
+                            DateFoundry = (DateTime)x.DateFoundry,
+                            DatePack = (DateTime)x.DatePack,
+                            Article = x.Article,
+                            Packs = Math.Round((decimal)x.Packs, 2),
+                            Price = (decimal)x.Price
+                        })
+                        .ToList();
 
-                            using (var reader = cmd.ExecuteReader())
+                    // вообще все данные для расчета штрафов
+                    var allReportDataRaw = db.DailyReport
+                        .Where(dr => dr.FIO_Foundry == foundryName &&
+                                    dr.DatePack >= startDate &&
+                                    dr.DatePack <= endDate)
+                        .Join(db.Articles,
+                            dr => dr.ArticleFoundry,
+                            a => a.Article,
+                            (dr, a) => new
                             {
-                                while (reader.Read())
-                                {
-                                    var item = new FoundryReportItem
-                                    {
-                                        DateFoundry = (DateTime)reader["DateFoundry"],
-                                        DatePack = (DateTime)reader["DatePack"],
-                                        Article = reader["ArticleFoundry"].ToString(),
-                                        Packs = Math.Round(Convert.ToDecimal(reader["Packs"]), 2),
-                                        Fines = Convert.ToDecimal(reader["Fines"]),
-                                        Price = Convert.ToDecimal(reader["PriceFoundry"])
-                                    };
-                                    allReportData.Add(item);
-                                }
-                            }
-                        }
-                    }
+                                DateFoundry = dr.DateFoundry,
+                                DatePack = dr.DatePack,
+                                Article = dr.ArticleFoundry,
+                                Packs = dr.Packs2 ?? 0,
+                                Fines = dr.FinePacksFoundry ?? 0,
+                                Price = a.PriceFoundry
+                            })
+                        .OrderBy(x => x.DatePack)
+                        .ThenBy(x => x.DateFoundry)
+                        .ThenBy(x => x.Article)
+                        .ToList();
+
+                    // Преобразуем после получения данных из БД
+                    var allReportData = allReportDataRaw
+                        .Select(x => new FoundryReportItem
+                        {
+                            DateFoundry = (DateTime)x.DateFoundry,
+                            DatePack = (DateTime)x.DatePack,
+                            Article = x.Article,
+                            Packs = Math.Round((decimal)x.Packs, 2),
+                            Fines = (decimal)x.Fines,
+                            Price = (decimal)x.Price
+                        })
+                        .ToList();
 
                     // допы
-                    var additionalServices = db.DopFoundry
+                    var additionalServicesRaw = db.DopFoundry
                         .Where(x => x.FIO_Foundry == foundryName && x.DateDop >= startDate && x.DateDop <= endDate)
+                        .ToList();
+
+                    var additionalServices = additionalServicesRaw
                         .GroupBy(x => x.DateDop)
                         .Select(g => new
                         {
                             Date = g.Key,
-                            Total = g.Sum(x => x.Colvo * x.PriceForOne)
+                            Total = g.Sum(x => (x.Colvo) * (x.PriceForOne))
                         })
                         .OrderBy(x => x.Date)
                         .ToList();
 
-                    decimal totalAdditionalServices = additionalServices.Sum(x => x.Total);
+                    decimal totalAdditionalServices = additionalServices.Sum(x => (decimal)x.Total);
 
-                    
+                    // расчеты
                     decimal totalPacks = allReportData.Sum(x => x.Packs);
                     decimal totalFines = allReportData.Sum(x => x.Fines);
-                    decimal totalSalary = mainTableData.Sum(x => x.Packs * x.Price); 
+                    decimal totalSalary = mainTableData.Sum(x => x.Packs * x.Price);
                     decimal fineAmount = 0m;
 
                     if (totalPacks > 0 && totalFines > 0)
@@ -713,13 +656,13 @@ namespace BIGFISH_БД
                             .Select(x => x.PriceFoundry)
                             .FirstOrDefault();
 
-                        worksheet.Cell(row, col).Value = price;
+                        worksheet.Cell(row, col).Value = (decimal)price;
                         worksheet.Cell(row, col).Style = moneyStyle;
                         col++;
                     }
                     row++;
 
-                    // заполнение
+                    // заполнение таблицы - КАЖДАЯ ЗАПИСЬ ОТДЕЛЬНОЙ СТРОКОЙ
                     foreach (var item in mainTableData.OrderBy(x => x.DatePack).ThenBy(x => x.DateFoundry).ThenBy(x => x.Article))
                     {
                         col = 2;
@@ -736,17 +679,17 @@ namespace BIGFISH_БД
                         row++;
                     }
 
-                    // итог строчки
+
                     int totalRow = row++;
                     int sumRow = row++;
-                    int emptyRowAfterSum = row++; // пустая после суммы
-                    int foundryRow = row++; 
+                    int emptyRowAfterSum = row++; 
+                    int foundryRow = row++;
                     int fineRow = row++;
                     int additionalServicesRow = row++;
                     int salaryRow = row++;
 
                     worksheet.Cell(totalRow, 1).Value = "Количество за месяц";
-                    worksheet.Cell(totalRow, 2).Value = ""; 
+                    worksheet.Cell(totalRow, 2).Value = "";
                     col = 3;
 
                     Dictionary<string, decimal> articleTotals = new Dictionary<string, decimal>();
@@ -782,44 +725,38 @@ namespace BIGFISH_БД
                     }
                     worksheet.Range(sumRow, 1, sumRow, usedArticles.Count + 2).Style = summaryStyle;
 
-                    // пустая строка после суммы
+
                     worksheet.Row(emptyRowAfterSum).Height = 20;
 
-                    
                     worksheet.Cell(foundryRow, 1).Value = "Литье:";
                     worksheet.Cell(foundryRow, 3).Value = totalSalary;
                     worksheet.Cell(foundryRow, 3).Style.NumberFormat.Format = "#,##0.00 ₽";
 
-                    
                     worksheet.Cell(fineRow, 1).Value = "Штраф";
-                    worksheet.Cell(fineRow, 2).Value = ""; 
+                    worksheet.Cell(fineRow, 2).Value = "";
                     worksheet.Cell(fineRow, 3).Value = fineAmount;
                     worksheet.Cell(fineRow, 3).Style.NumberFormat.Format = "#,##0.00 ₽";
 
-                    
                     worksheet.Cell(additionalServicesRow, 1).Value = "Дополнительные услуги";
-                    worksheet.Cell(additionalServicesRow, 2).Value = ""; 
+                    worksheet.Cell(additionalServicesRow, 2).Value = "";
                     worksheet.Cell(additionalServicesRow, 3).Value = totalAdditionalServices;
                     worksheet.Cell(additionalServicesRow, 3).Style.NumberFormat.Format = "#,##0.00 ₽";
 
-                    
                     worksheet.Cell(salaryRow, 1).Value = "Итого";
-                    worksheet.Cell(salaryRow, 2).Value = ""; 
+                    worksheet.Cell(salaryRow, 2).Value = "";
                     worksheet.Cell(salaryRow, 3).Value = totalSalary - fineAmount + totalAdditionalServices;
                     worksheet.Cell(salaryRow, 3).Style.NumberFormat.Format = "#,##0.00 ₽";
                     worksheet.Cell(salaryRow, 3).Style.Font.Bold = true;
 
-                    // ддддопы
+
                     if (additionalServices.Any())
                     {
-                        row = salaryRow + 2; 
+                        row = salaryRow + 2;
 
-                        
                         worksheet.Cell(row, 1).Value = "Дополнительные услуги";
                         worksheet.Range(row, 1, row, 2).Merge().Style = headerStyle;
                         row++;
 
-                        
                         worksheet.Cell(row, 1).Value = "Дата услуги";
                         worksheet.Cell(row, 2).Value = "Сумма";
                         worksheet.Range(row, 1, row, 2).Style = headerStyle;
@@ -827,23 +764,20 @@ namespace BIGFISH_БД
 
                         foreach (var service in additionalServices)
                         {
-                            worksheet.Cell(row, 1).Value = service.Date.ToString("dd.MM.yyyy");
-                            worksheet.Cell(row, 2).Value = service.Total;
+                            worksheet.Cell(row, 1).Value = service.Date.ToString("dd.MM.yyyy") ?? "";
+                            worksheet.Cell(row, 2).Value = (decimal)service.Total;
                             worksheet.Cell(row, 2).Style.NumberFormat.Format = "#,##0.00 ₽";
                             row++;
                         }
 
-                        
                         worksheet.Cell(row, 1).Value = "Итого:";
                         worksheet.Cell(row, 2).Value = totalAdditionalServices;
                         worksheet.Cell(row, 2).Style.NumberFormat.Format = "#,##0.00 ₽";
                         worksheet.Range(row, 1, row, 2).Style = summaryStyle;
                     }
 
-                    
                     worksheet.Columns().AdjustToContents();
 
-                    
                     var tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(),
                         $"Отчет_литейщик_{foundryName}_{startDate:dd.MM.yyyy}_по_{endDate:dd.MM.yyyy}.xlsx");
 
@@ -857,7 +791,6 @@ namespace BIGFISH_БД
             }
         }
 
-        
         public class FoundryReportItem
         {
             public DateTime DateFoundry { get; set; }
