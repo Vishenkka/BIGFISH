@@ -385,7 +385,7 @@ namespace BIGFISH_БД
                     MessageBox.Show($"Отчет успешно сформирован!\nФайл: {tempFilePath}");
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 MessageBox.Show($"Ошибка при формировании отчета: {ex.Message}\n\n{ex.StackTrace}");
             }

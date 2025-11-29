@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ClosedXML.Excel;
 using System.Diagnostics;
+using static BIGFISH_БД.StatisticOnePerson;
 
 namespace BIGFISH_БД
 {

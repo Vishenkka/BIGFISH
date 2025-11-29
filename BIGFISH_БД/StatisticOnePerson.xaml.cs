@@ -338,11 +338,6 @@ namespace BIGFISH_БД
 
         private void GenerateFoundryReportForOne(DateTime startDate, DateTime endDate, string foundryName)
         {
-            string connectionString = @"data source=V_ISHENKA\SQLEXPRESS,1433;
-                                    initial catalog=BigFishBD;
-                                    user id=User1;
-                                    password=12345;";
-
             try
             {
                 using (var db = new BigFishBDEntities())
@@ -382,18 +377,32 @@ namespace BIGFISH_БД
                     }
                     currentRow++;
 
-                    var articleData = db.DailyReport
+                    // Получаем данные по артикулам через LINQ
+                    var articleDataRaw = db.DailyReport
                         .Where(dr => dr.FIO_Foundry == foundryName &&
                                     dr.DatePack >= startDate &&
                                     dr.DatePack <= endDate &&
-                                    (dr.Packs2 > 0 || dr.FinePacksFoundry > 0)) 
-                        .GroupBy(dr => dr.ArticleFoundry)
+                                    (dr.Packs2 > 0 || dr.FinePacksFoundry > 0))
+                        .Join(db.Articles,
+                            dr => dr.ArticleFoundry,
+                            a => a.Article,
+                            (dr, a) => new
+                            {
+                                Article = dr.ArticleFoundry,
+                                Packs2 = dr.Packs2 ?? 0,
+                                FinePacksFoundry = dr.FinePacksFoundry ?? 0,
+                                PriceFoundry = a.PriceFoundry
+                            })
+                        .ToList();
+
+                    var articleData = articleDataRaw
+                        .GroupBy(x => x.Article)
                         .Select(g => new
                         {
                             Article = g.Key,
-                            TotalPacks = g.Sum(x => x.Packs2 ?? 0),
-                            TotalDefects = g.Sum(x => x.FinePacksFoundry ?? 0),
-                            Price = db.Articles.Where(a => a.Article == g.Key).Select(a => a.PriceFoundry).FirstOrDefault()
+                            TotalPacks = g.Sum(x => x.Packs2),
+                            TotalDefects = g.Sum(x => x.FinePacksFoundry),
+                            Price = g.First().PriceFoundry
                         })
                         .OrderBy(x => x.Article)
                         .ToList();
@@ -404,7 +413,7 @@ namespace BIGFISH_БД
 
                     foreach (var article in articleData)
                     {
-                        decimal articlePrice = article.Price;
+                        decimal articlePrice = (decimal)article.Price;
                         decimal articleSum = (decimal)article.TotalPacks * articlePrice;
                         totalArticleSalary += articleSum;
                         totalAllPacks += (decimal)article.TotalPacks;
@@ -449,65 +458,74 @@ namespace BIGFISH_БД
                         }
                     }
 
+                    // Дополнительные услуги через LINQ
                     var additionalServicesData = db.DopFoundry
                         .Where(x => x.FIO_Foundry == foundryName &&
                                    x.DateDop >= startDate && x.DateDop <= endDate)
                         .ToList();
 
-                    decimal additionalServices = 0;
-                    foreach (var service in additionalServicesData)
-                    {
-                        decimal colvo = service.Colvo;
-                        decimal price = service.PriceForOne;
-                        additionalServices += colvo * price;
-                    }
+                    decimal additionalServices = additionalServicesData.Sum(x =>
+                        (x.Colvo) * (x.PriceForOne));
 
+                    // Авансы через LINQ
                     var advancePaymentsData = db.AdvancePayFoundry
                         .Where(x => x.FIO_Foundry == foundryName &&
                                    x.DateAdv >= startDate && x.DateAdv <= endDate)
                         .ToList();
 
-                    decimal advancePayments = 0;
-                    foreach (var advance in advancePaymentsData)
-                    {
-                        advancePayments += (decimal)(advance.AdvancePay ?? 0);
-                    }
+                    decimal advancePayments = advancePaymentsData.Sum(x =>
+                        (decimal)(x.AdvancePay ?? 0));
 
+                    // Расчет премии через LINQ
                     decimal premium = 0m;
 
-                    var allFoundryStandardPacks = db.DailyReport
+                    // Получаем стандартные пачки всех литейщиков
+                    var allFoundryStandardPacksRaw = db.DailyReport
                         .Where(dr => dr.DatePack >= startDate && dr.DatePack <= endDate && (dr.Packs2 ?? 0) > 0)
-                        .GroupBy(dr => dr.FIO_Foundry)
+                        .Join(db.Articles,
+                            dr => dr.ArticleFoundry,
+                            a => a.Article,
+                            (dr, a) => new
+                            {
+                                FIO_Foundry = dr.FIO_Foundry,
+                                Packs2 = dr.Packs2 ?? 0,
+                                Type = a.Type ?? 0
+                            })
+                        .ToList();
+
+                    var allFoundryStandardPacks = allFoundryStandardPacksRaw
+                        .Where(x => x.Type == 1)
+                        .GroupBy(x => x.FIO_Foundry)
                         .Select(g => new
                         {
                             Foundry = g.Key,
-                            StandardPacks = g.Sum(x => db.Articles
-                                .Where(a => a.Article == x.ArticleFoundry && a.Type == 1)
-                                .Select(a => x.Packs2 ?? 0)
-                                .FirstOrDefault())
+                            StandardPacks = (decimal)g.Sum(x => x.Packs2)
                         })
                         .ToList();
 
-                    double maxStandardPacks = allFoundryStandardPacks.Max(x => x.StandardPacks);
-                    var currentFoundryData = allFoundryStandardPacks.FirstOrDefault(x => x.Foundry == foundryName);
-                    double currentFoundryStandardPacks = currentFoundryData?.StandardPacks ?? 0;
-
-                    if (currentFoundryStandardPacks > 0 && Math.Abs(currentFoundryStandardPacks - maxStandardPacks) < 0.01)
+                    if (allFoundryStandardPacks.Any())
                     {
-                        premium = (decimal)currentFoundryStandardPacks * 3m;
+                        decimal maxStandardPacks = allFoundryStandardPacks.Max(x => x.StandardPacks);
+                        var currentFoundryData = allFoundryStandardPacks.FirstOrDefault(x => x.Foundry == foundryName);
+                        decimal currentFoundryStandardPacks = currentFoundryData?.StandardPacks ?? 0;
+
+                        if (currentFoundryStandardPacks > 0 && Math.Abs(currentFoundryStandardPacks - maxStandardPacks) < 0.01m)
+                        {
+                            premium = currentFoundryStandardPacks * 3m;
+                        }
                     }
 
                     decimal finalSalary = totalArticleSalary + premium + additionalServices - fineAmount + advancePayments;
 
                     var salaryItems = new List<SalaryItem>
-                {
-                    new SalaryItem { Description = "Зарплата за литье:", Value = totalArticleSalary },
-                    new SalaryItem { Description = "Премия:", Value = premium },
-                    new SalaryItem { Description = "Дополнительные услуги:", Value = additionalServices },
-                    new SalaryItem { Description = "Штраф за брак:", Value = -fineAmount },
-                    new SalaryItem { Description = "Аванс/удержания:", Value = advancePayments },
-                    new SalaryItem { Description = "ИТОГО К ВЫПЛАТЕ:", Value = finalSalary }
-                };
+            {
+                new SalaryItem { Description = "Зарплата за литье:", Value = totalArticleSalary },
+                new SalaryItem { Description = "Премия:", Value = premium },
+                new SalaryItem { Description = "Дополнительные услуги:", Value = additionalServices },
+                new SalaryItem { Description = "Штраф за брак:", Value = -fineAmount },
+                new SalaryItem { Description = "Аванс/удержания:", Value = advancePayments },
+                new SalaryItem { Description = "ИТОГО К ВЫПЛАТЕ:", Value = finalSalary }
+            };
 
                     foreach (var item in salaryItems)
                     {
@@ -529,7 +547,7 @@ namespace BIGFISH_БД
 
                     currentRow++;
 
-
+                    // Таблица дополнительных услуг
                     if (additionalServicesData.Any())
                     {
                         worksheet.Cell(currentRow, 1).Value = "ДОПОЛНИТЕЛЬНЫЕ УСЛУГИ";
@@ -574,6 +592,7 @@ namespace BIGFISH_БД
 
                     currentRow++;
 
+                    // Таблица авансов и удержаний
                     if (advancePaymentsData.Any())
                     {
                         worksheet.Cell(currentRow, 1).Value = "АВАНСЫ И УДЕРЖАНИЯ";
@@ -623,11 +642,11 @@ namespace BIGFISH_БД
                 MessageBox.Show($"Ошибка при формировании отчета: {ex.Message}\n\n{ex.StackTrace}");
             }
         }
-    }
 
-    public class SalaryItem
-    {
-        public string Description { get; set; }
-        public decimal Value { get; set; }
+        public class SalaryItem
+        {
+            public string Description { get; set; }
+            public decimal Value { get; set; }
+        }
     }
 }
