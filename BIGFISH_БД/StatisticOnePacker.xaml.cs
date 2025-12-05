@@ -312,18 +312,12 @@ namespace BIGFISH_БД
 
         private void GeneratePackerReportForOne(DateTime startDate, DateTime endDate, string packerName)
         {
-            string connectionString = @"data source=V_ISHENKA\SQLEXPRESS,1433;
-                                    initial catalog=BigFishBD;
-                                    user id=User1;
-                                    password=12345;";
-
             try
             {
                 using (var db = new BigFishBDEntities())
                 using (var workbook = new XLWorkbook())
                 {
                     var worksheet = workbook.Worksheets.Add("Отчет");
-
 
                     var headerStyle = workbook.Style;
                     headerStyle.Font.Bold = true;
@@ -337,21 +331,17 @@ namespace BIGFISH_БД
                     summaryStyle.Font.Bold = true;
                     summaryStyle.Fill.BackgroundColor = XLColor.Yellow;
 
-
                     worksheet.Cell(1, 1).Value = $"Отчет по упаковщице: {packerName}";
                     worksheet.Cell(2, 1).Value = $"Период: с {startDate:dd.MM.yyyy} по {endDate:dd.MM.yyyy}";
                     worksheet.Range(1, 1, 2, 1).Style.Font.Bold = true;
                     worksheet.Range(1, 1, 2, 1).Style.Font.FontSize = 14;
 
-
                     int currentRow = 4;
-
 
                     worksheet.Cell(currentRow, 1).Value = "УПАКОВАННЫЕ АРТИКУЛЫ";
                     worksheet.Cell(currentRow, 1).Style = headerStyle;
                     worksheet.Range(currentRow, 1, currentRow, 4).Merge();
                     currentRow++;
-
 
                     var articleHeaders = new[] { "Артикул", "Количество пачек", "Бракованные пачки", "Сумма" };
                     for (int i = 0; i < articleHeaders.Length; i++)
@@ -361,19 +351,32 @@ namespace BIGFISH_БД
                     }
                     currentRow++;
 
-
-                    var articleData = db.DailyReport
+                    // Получаем данные через LINQ с JOIN для получения цен
+                    var articleDataRaw = db.DailyReport
                         .Where(dr => dr.FIO == packerName &&
                                     dr.DatePack >= startDate &&
                                     dr.DatePack <= endDate &&
                                     (dr.Packs > 0 || dr.FinePacks > 0))
-                        .GroupBy(dr => dr.ArticlePack)
+                        .Join(db.Articles,
+                            dr => dr.ArticlePack,
+                            a => a.Article,
+                            (dr, a) => new
+                            {
+                                Article = dr.ArticlePack,
+                                Packs = dr.Packs ?? 0,
+                                FinePacks = dr.FinePacks ?? 0,
+                                Price = a.PricePackers
+                            })
+                        .ToList();
+
+                    var articleData = articleDataRaw
+                        .GroupBy(x => x.Article)
                         .Select(g => new
                         {
                             Article = g.Key,
-                            TotalPacks = g.Sum(x => x.Packs ?? 0),
-                            TotalDefects = g.Sum(x => x.FinePacks ?? 0),
-                            Price = db.Articles.Where(a => a.Article == g.Key).Select(a => a.PricePackers).FirstOrDefault()
+                            TotalPacks = g.Sum(x => x.Packs),
+                            TotalDefects = g.Sum(x => x.FinePacks),
+                            Price = g.First().Price
                         })
                         .OrderBy(x => x.Article)
                         .ToList();
@@ -384,7 +387,7 @@ namespace BIGFISH_БД
 
                     foreach (var article in articleData)
                     {
-                        decimal articlePrice = article.Price;
+                        decimal articlePrice = (decimal)article.Price;
                         decimal articleSum = (decimal)article.TotalPacks * articlePrice;
                         totalArticleSalary += articleSum;
                         totalAllPacks += (decimal)article.TotalPacks;
@@ -400,7 +403,6 @@ namespace BIGFISH_БД
                         currentRow++;
                     }
 
-
                     worksheet.Cell(currentRow, 1).Value = "Итого:";
                     worksheet.Cell(currentRow, 1).Style = summaryStyle;
                     worksheet.Cell(currentRow, 2).Value = Math.Round(totalAllPacks, 2);
@@ -415,60 +417,49 @@ namespace BIGFISH_БД
 
                     currentRow += 2;
 
-
                     worksheet.Cell(currentRow, 1).Value = "РАСЧЕТ ЗАРАБОТНОЙ ПЛАТЫ";
                     worksheet.Cell(currentRow, 1).Style = headerStyle;
                     worksheet.Range(currentRow, 1, currentRow, 3).Merge();
                     currentRow++;
 
-                    var totalFoundDefects = db.DailyReport
+                    // Получаем данные для расчетов через LINQ
+                    var dailyReportData = db.DailyReport
                         .Where(dr => dr.FIO == packerName &&
                                    dr.DatePack >= startDate && dr.DatePack <= endDate)
-                        .Sum(dr => dr.FinePacksFoundry ?? 0);
+                        .ToList();
 
+                    var totalFoundDefects = dailyReportData.Sum(dr => dr.FinePacksFoundry ?? 0);
                     decimal premium = (decimal)totalFoundDefects * 2m;
 
-
-                    decimal fineAmount = (decimal)totalAllDefects * 50m;
-
+                    decimal fineAmount = totalAllDefects * 50m;
 
                     var additionalServicesData = db.DopPackers
                         .Where(x => x.FIO == packerName &&
                                    x.DateDopPackers >= startDate && x.DateDopPackers <= endDate)
                         .ToList();
 
-                    decimal additionalServices = 0;
-                    foreach (var service in additionalServicesData)
-                    {
-                        decimal colvo = (decimal)service.Colvo;
-                        decimal price = (decimal)service.PriceForOne;
-                        additionalServices += colvo * price;
-                    }
-
+                    decimal additionalServices = additionalServicesData.Sum(x =>
+                        (x.Colvo ?? 0) * (x.PriceForOne ?? 0));
 
                     var advancePaymentsData = db.AdvancePayPackers
                         .Where(x => x.FIO == packerName &&
                                    x.DateAdv >= startDate && x.DateAdv <= endDate)
                         .ToList();
 
-                    decimal advancePayments = 0;
-                    foreach (var advance in advancePaymentsData)
-                    {
-                        advancePayments += (decimal)(advance.AdvancePay ?? 0);
-                    }
+                    decimal advancePayments = advancePaymentsData.Sum(x =>
+                        (decimal)(x.AdvancePay ?? 0));
 
                     decimal finalSalary = totalArticleSalary + premium + additionalServices - fineAmount + advancePayments;
 
-
-                    var salaryItems = new List<SalaryItem>
-                {
-                    new SalaryItem { Description = "Зарплата за упаковку:", Value = totalArticleSalary },
-                    new SalaryItem { Description = "Премия за найденный брак:", Value = premium },
-                    new SalaryItem { Description = "Дополнительные услуги:", Value = additionalServices },
-                    new SalaryItem { Description = "Штраф:", Value = -fineAmount },
-                    new SalaryItem { Description = "Аванс/удержания:", Value = advancePayments },
-                    new SalaryItem { Description = "ИТОГО К ВЫПЛАТЕ:", Value = finalSalary }
-                };
+                    var salaryItems = new List<SalaryItemPackers>
+            {
+                new SalaryItemPackers { Description = "Зарплата за упаковку:", Value = totalArticleSalary },
+                new SalaryItemPackers { Description = "Премия за найденный брак:", Value = premium },
+                new SalaryItemPackers { Description = "Дополнительные услуги:", Value = additionalServices },
+                new SalaryItemPackers { Description = "Штраф:", Value = -fineAmount },
+                new SalaryItemPackers { Description = "Аванс/удержания:", Value = advancePayments },
+                new SalaryItemPackers { Description = "ИТОГО К ВЫПЛАТЕ:", Value = finalSalary }
+            };
 
                     foreach (var item in salaryItems)
                     {
@@ -507,8 +498,8 @@ namespace BIGFISH_БД
 
                         foreach (var service in additionalServicesData)
                         {
-                            decimal colvo = (decimal)service.Colvo;
-                            decimal price = (decimal)service.PriceForOne;
+                            decimal colvo = service.Colvo ?? 0;
+                            decimal price = service.PriceForOne ?? 0;
                             decimal serviceSum = colvo * price;
 
                             string serviceDate = service.DateDopPackers.ToString("dd.MM.yyyy") ?? "Не указана";
@@ -583,12 +574,12 @@ namespace BIGFISH_БД
                 MessageBox.Show($"Ошибка при формировании отчета: {ex.Message}\n\n{ex.StackTrace}");
             }
         }
-    }
 
-    // Вспомогательный класс для расчета ЗП
-    public class SalaryItemPackers
-    {
-        public string Description { get; set; }
-        public decimal Value { get; set; }
+        // Вспомогательный класс для расчета ЗП
+        public class SalaryItemPackers
+        {
+            public string Description { get; set; }
+            public decimal Value { get; set; }
+        }
     }
 }

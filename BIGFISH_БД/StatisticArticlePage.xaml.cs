@@ -224,18 +224,12 @@ namespace BIGFISH_БД
 
         private void GenerateArticleReport(DateTime startDate, DateTime endDate, string articleName)
         {
-            string connectionString = @"data source=V_ISHENKA\SQLEXPRESS,1433;
-                                    initial catalog=BigFishBD;
-                                    user id=User1;
-                                    password=12345;";
-
             try
             {
                 using (var db = new BigFishBDEntities())
                 using (var workbook = new XLWorkbook())
                 {
                     var worksheet = workbook.Worksheets.Add("Отчет");
-
 
                     var headerStyle = workbook.Style;
                     headerStyle.Font.Bold = true;
@@ -254,7 +248,6 @@ namespace BIGFISH_БД
                     worksheet.Range(1, 1, 2, 1).Style.Font.Bold = true;
                     worksheet.Range(1, 1, 2, 1).Style.Font.FontSize = 14;
 
-
                     int currentRow = 4;
 
                     worksheet.Cell(currentRow, 1).Value = "ОБЩАЯ СТАТИСТИКА ПО АРТИКУЛУ";
@@ -270,24 +263,22 @@ namespace BIGFISH_БД
                     }
                     currentRow++;
 
-                    var totalPacks = db.DailyReport
+                    // Получаем данные через LINQ
+                    var dailyReportData = db.DailyReport
                         .Where(dr => dr.DatePack >= startDate && dr.DatePack <= endDate &&
                                     dr.ArticlePack == articleName)
-                        .Sum(dr => dr.Packs ?? 0);
+                        .ToList();
 
-                    var totalDefects = db.DailyReport
-                        .Where(dr => dr.DatePack >= startDate && dr.DatePack <= endDate &&
-                                    dr.ArticlePack == articleName)
-                        .Sum(dr => dr.FinePacksFoundry ?? 0);
+                    var totalPacks = dailyReportData.Sum(dr => dr.Packs ?? 0);
+                    var totalDefects = dailyReportData.Sum(dr => dr.FinePacksFoundry ?? 0);
 
                     var articlePrice = db.Articles
                         .Where(a => a.Article == articleName)
                         .Select(a => a.PricePackers)
                         .FirstOrDefault();
 
-                    decimal totalSum = (decimal)totalPacks * articlePrice;
+                    decimal totalSum = (decimal)totalPacks * (decimal)articlePrice;
                     double defectPercentage = totalPacks > 0 ? (double)totalDefects / totalPacks * 100 : 0;
-
 
                     worksheet.Cell(currentRow, 1).Value = "Всего пачек";
                     worksheet.Cell(currentRow, 2).Value = totalPacks;
@@ -304,12 +295,10 @@ namespace BIGFISH_БД
 
                     currentRow++;
 
-
                     worksheet.Cell(currentRow, 1).Value = "СТАТИСТИКА ПО ЛИТЕЙЩИКАМ";
                     worksheet.Cell(currentRow, 1).Style = headerStyle;
                     worksheet.Range(currentRow, 1, currentRow, 5).Merge();
                     currentRow++;
-
 
                     var foundryHeaders = new[] { "Литейщик", "Залито пачек", "Бракованных пачек", "Процент брака", "Сумма" };
                     for (int i = 0; i < foundryHeaders.Length; i++)
@@ -319,11 +308,14 @@ namespace BIGFISH_БД
                     }
                     currentRow++;
 
-
-                    var foundryData = db.DailyReport
+                    // Получаем данные по литейщикам через LINQ
+                    var foundryDataRaw = db.DailyReport
                         .Where(dr => dr.DatePack >= startDate && dr.DatePack <= endDate &&
                                     dr.ArticleFoundry == articleName &&
                                     dr.FIO_Foundry != null)
+                        .ToList();
+
+                    var foundryData = foundryDataRaw
                         .GroupBy(dr => dr.FIO_Foundry)
                         .Select(g => new
                         {
@@ -339,7 +331,7 @@ namespace BIGFISH_БД
                     {
                         double foundryDefectPercentage = foundry.TotalPacks > 0 ?
                             (double)foundry.TotalDefects / foundry.TotalPacks * 100 : 0;
-                        decimal foundrySum = (decimal)foundry.TotalPacks * articlePrice;
+                        decimal foundrySum = (decimal)foundry.TotalPacks * (decimal)articlePrice;
 
                         worksheet.Cell(currentRow, 1).Value = foundry.FoundryName;
                         worksheet.Cell(currentRow, 2).Value = foundry.TotalPacks;
@@ -350,12 +342,12 @@ namespace BIGFISH_БД
                         currentRow++;
                     }
 
-
+                    // Итоговая строка по литейщикам
                     if (foundryData.Any())
                     {
                         var totalFoundryPacks = foundryData.Sum(x => x.TotalPacks);
                         var totalFoundryDefects = foundryData.Sum(x => x.TotalDefects);
-                        decimal totalFoundrySum = (decimal)totalFoundryPacks * articlePrice;
+                        decimal totalFoundrySum = (decimal)totalFoundryPacks * (decimal)articlePrice;
                         double totalFoundryDefectPercentage = totalFoundryPacks > 0 ?
                             (double)totalFoundryDefects / totalFoundryPacks * 100 : 0;
 
@@ -372,9 +364,8 @@ namespace BIGFISH_БД
                         worksheet.Cell(currentRow, 5).Style.NumberFormat.Format = moneyStyle.NumberFormat.Format;
                     }
 
-
+                    // Автоподбор ширины колонок
                     worksheet.Columns().AdjustToContents();
-
 
                     var tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(),
                         $"Отчет_артикул_{articleName}_{startDate:dd.MM.yyyy}_по_{endDate:dd.MM.yyyy}.xlsx");
@@ -385,7 +376,7 @@ namespace BIGFISH_БД
                     MessageBox.Show($"Отчет успешно сформирован!\nФайл: {tempFilePath}");
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при формировании отчета: {ex.Message}\n\n{ex.StackTrace}");
             }
