@@ -5,38 +5,179 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BIGFISH_БД" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="630" d:DesignWidth="1130">
-    <Viewbox Stretch="Uniform">
+                    d:DesignHeight="630" d:DesignWidth="1130">
 
-        <Grid>
-            <TextBlock Text="Добро пожаловать!" FontSize="40" Foreground="SlateBlue" Margin="0,66,0,0" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-            <TextBlock Text="Заполнить ежедневные данные о сборке" TextAlignment="Center" TextWrapping="Wrap" Foreground="SlateBlue" FontSize="20" Height="130" Width="300" Margin="91,213,739,287"/>
-            <materialDesign:PackIcon Kind="Number1Circle"  Height="25" Width="25" Margin="61,213,0,0" Foreground="SlateBlue"/>
-            <Button x:Name="DailyReport" Click="DailyReport_Click" Background="AliceBlue" Content="К таблице" Width="200" FontSize="19" Margin="141,290,789,308"/>
+    <UserControl.Resources>
+        <Style x:Key="DashboardCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#FFE0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Margin" Value="12"/>
+            <Setter Property="Padding" Value="18"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="3" Color="#FFAAAAAA" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-            <TextBlock Text="Сформировать отчет об упаковщицах" Foreground="SlateBlue" TextWrapping="Wrap" TextAlignment="Center"  FontSize="20" Height="130" Width="300" Margin="415,429,415,131"/>
-            <materialDesign:PackIcon Kind="Number2Circle"  Height="25" Width="25" Margin="425,213,415,287" Foreground="SlateBlue"/>
-            <Button x:Name="ReportPackers" Click="ReportPackers_Click"  Background="AliceBlue" Content="Сформировать" Width="200" FontSize="19" Margin="465,524,465,134"/>
+        <Style x:Key="DashboardButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="SlateBlue"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="18,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+        </Style>
 
+        <Style x:Key="CardTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="SlateBlue"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
 
-            <TextBlock Text="Сформировать отчет о литейщиках" TextAlignment="Center" TextWrapping="Wrap" Foreground="SlateBlue" FontSize="20" Width="300" Margin="91,429,739,125"/>
-            <materialDesign:PackIcon Kind="Number4Circle"  Height="25" Width="25" Margin="74,405,0,0" Foreground="SlateBlue"/>
-            <Button x:Name="ReportFoundry" Click="ReportFoundry_Click"  Background="AliceBlue" Content="Сформировать" Width="200" FontSize="19" Margin="141,524,789,134"/>
+        <Style x:Key="IconStyle" TargetType="materialDesign:PackIcon">
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Foreground" Value="SlateBlue"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+    </UserControl.Resources>
 
-            <TextBlock Text="Сформировать итоговый отчет о зарплате" TextWrapping="Wrap" Foreground="SlateBlue" FontSize="20" Width="250" Height="90" TextAlignment="Center" Margin="804,429,76,171"/>
-            <materialDesign:PackIcon Kind="Number6Circle"  Height="25" Width="25" Margin="779,405,0,0" Foreground="SlateBlue" RenderTransformOrigin="0.528,0.624"/>
-            <Button x:Name="TotalReport" Click="TotalReport_Click"  Background="AliceBlue" Content="Сформировать" Width="200" FontSize="19" Margin="829,524,101,134"/>
+    <Grid Background="#FFF5F5F5">
+        <ScrollViewer VerticalScrollBarVisibility="Disabled" Margin="15">
+            <StackPanel Margin="0,30,0,30" VerticalAlignment="Center">
 
+                <WrapPanel HorizontalAlignment="Center" Margin="0,0,0,20">
 
-            <TextBlock Text="Заполнить данные о допах и авансе" TextWrapping="Wrap" Foreground="SlateBlue" FontSize="20" Width="250" Height="90" TextAlignment="Center" Margin="440,243,440,357"/>
-            <materialDesign:PackIcon Kind="Number5Circle"  Height="26" Width="25" Margin="425,404,0,0" Foreground="SlateBlue" RenderTransformOrigin="0.606,0.662"/>
-            <Button x:Name="DopReport" Click="DopReport_Click"  Background="AliceBlue" Content="К таблицам" Width="200" FontSize="19" Margin="465,320,465,338"/>
+                    <Border Style="{StaticResource DashboardCardStyle}" Width="300" Height="200">
+                        <Grid>
+                            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
+                                <materialDesign:PackIcon Kind="ClipboardEdit" Style="{StaticResource IconStyle}"/>
+                                <TextBlock Text="Ежедневные данные о сборке" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,10"/>
+                                <TextBlock Text="Заполнение ежедневной информации о производстве" 
+                                       TextWrapping="Wrap" 
+                                       TextAlignment="Center" 
+                                       Foreground="#FF666666" 
+                                       FontSize="12"
+                                       Margin="0,0,0,15"/>
+                            </StackPanel>
+                            <Button x:Name="DailyReport" 
+                                Content="Перейти к таблице" 
+                                Style="{StaticResource DashboardButtonStyle}"
+                                Click="DailyReport_Click"/>
+                        </Grid>
+                    </Border>
 
+                    <Border Style="{StaticResource DashboardCardStyle}" Width="300" Height="200">
+                        <Grid>
+                            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
+                                <materialDesign:PackIcon Kind="CashMultiple" Style="{StaticResource IconStyle}"/>
+                                <TextBlock Text="Доп. услуги и авансы" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,10"/>
+                                <TextBlock Text="Управление дополнительными выплатами и авансами" 
+                                       TextWrapping="Wrap" 
+                                       TextAlignment="Center" 
+                                       Foreground="#FF666666" 
+                                       FontSize="12"
+                                       Margin="0,0,0,15"/>
+                            </StackPanel>
+                            <Button x:Name="DopReport" 
+                                Content="Перейти к таблицам" 
+                                Style="{StaticResource DashboardButtonStyle}"
+                                Click="DopReport_Click"/>
+                        </Grid>
+                    </Border>
 
-            <TextBlock Text="Сформировать отчет по дням" TextWrapping="Wrap" Foreground="SlateBlue" FontSize="20" Width="250" Height="90" TextAlignment="Center" Margin="804,243,76,357"/>
-            <materialDesign:PackIcon Kind="Number3Circle"  Height="26" Width="25" Margin="779,213,0,0" Foreground="SlateBlue" RenderTransformOrigin="0.606,0.662"/>
-            <Button x:Name="OnePersonReport" Click="OnePersonReport_Click"  Background="AliceBlue" Content="Сформировать" Width="200" FontSize="19" Margin="829,320,101,338"/>
+                    <Border Style="{StaticResource DashboardCardStyle}" Width="300" Height="200">
+                        <Grid>
+                            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
+                                <materialDesign:PackIcon Kind="CalendarText" Style="{StaticResource IconStyle}"/>
+                                <TextBlock Text="Отчет по дням" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,10"/>
+                                <TextBlock Text="Детальная статистика по дням и периодам" 
+                                       TextWrapping="Wrap" 
+                                       TextAlignment="Center" 
+                                       Foreground="#FF666666" 
+                                       FontSize="12"
+                                       Margin="0,0,0,15"/>
+                            </StackPanel>
+                            <Button x:Name="OnePersonReport" 
+                                Content="Сформировать отчет" 
+                                Style="{StaticResource DashboardButtonStyle}"
+                                Click="OnePersonReport_Click"/>
+                        </Grid>
+                    </Border>
 
-        </Grid>
-    </Viewbox>
+                </WrapPanel>
+
+                <WrapPanel HorizontalAlignment="Center">
+
+                    <Border Style="{StaticResource DashboardCardStyle}" Width="300" Height="200">
+                        <Grid>
+                            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
+                                <materialDesign:PackIcon Kind="AccountGroup" Style="{StaticResource IconStyle}"/>
+                                <TextBlock Text="Отчет по упаковщицам" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,10"/>
+                                <TextBlock Text="Статистика и аналитика работы упаковщиц" 
+                                       TextWrapping="Wrap" 
+                                       TextAlignment="Center" 
+                                       Foreground="#FF666666" 
+                                       FontSize="12"
+                                       Margin="0,0,0,15"/>
+                            </StackPanel>
+                            <Button x:Name="ReportPackers" 
+                                Content="Сформировать отчет" 
+                                Style="{StaticResource DashboardButtonStyle}"
+                                Click="ReportPackers_Click"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource DashboardCardStyle}" Width="300" Height="200">
+                        <Grid>
+                            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
+                                <materialDesign:PackIcon Kind="AccountHardHat" Style="{StaticResource IconStyle}"/>
+                                <TextBlock Text="Отчет по литейщикам" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,10"/>
+                                <TextBlock Text="Анализ производительности литейного цеха" 
+                                       TextWrapping="Wrap" 
+                                       TextAlignment="Center" 
+                                       Foreground="#FF666666" 
+                                       FontSize="12"
+                                       Margin="0,0,0,15"/>
+                            </StackPanel>
+                            <Button x:Name="ReportFoundry" 
+                                Content="Сформировать отчет" 
+                                Style="{StaticResource DashboardButtonStyle}"
+                                Click="ReportFoundry_Click"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource DashboardCardStyle}" Width="300" Height="200">
+                        <Grid>
+                            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
+                                <materialDesign:PackIcon Kind="FileChart" Style="{StaticResource IconStyle}"/>
+                                <TextBlock Text="Итоговый отчет по зарплате" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,10"/>
+                                <TextBlock Text="Сводный отчет по заработной плате сотрудников" 
+                                       TextWrapping="Wrap" 
+                                       TextAlignment="Center" 
+                                       Foreground="#FF666666" 
+                                       FontSize="12"
+                                       Margin="0,0,0,15"/>
+                            </StackPanel>
+                            <Button x:Name="TotalReport" 
+                                Content="Сформировать отчет" 
+                                Style="{StaticResource DashboardButtonStyle}"
+                                Background="#FF28A745"
+                                Click="TotalReport_Click"/>
+                        </Grid>
+                    </Border>
+
+                </WrapPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </UserControl>
